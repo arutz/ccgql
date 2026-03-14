@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { inject, Injectable } from "@angular/core";
+import { map, Observable } from "rxjs";
 
 import {
   AddressFieldsFragment,
@@ -8,10 +8,10 @@ import {
   FindAddressGQL,
   ListAddressesGQL,
   SaveAddressGQL,
-} from '../../generated/graphql';
+} from "../../generated/graphql";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AddressApiService {
   private readonly listAddressesGql = inject(ListAddressesGQL);
@@ -21,19 +21,19 @@ export class AddressApiService {
 
   listAddresses(): Observable<AddressFieldsFragment[]> {
     return this.listAddressesGql
-      .fetch({ fetchPolicy: 'network-only' })
+      .fetch({ fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.listAddresses ?? []) as AddressFieldsFragment[]));
   }
 
   watchAddresses(): Observable<AddressFieldsFragment[]> {
     return this.listAddressesGql
-      .watch({ fetchPolicy: 'cache-and-network' })
+      .watch({ fetchPolicy: "cache-and-network" })
       .valueChanges.pipe(map(({ data }) => (data?.listAddresses ?? []) as AddressFieldsFragment[]));
   }
 
   findAddress(id: number): Observable<AddressFieldsFragment | null> {
     return this.findAddressGql
-      .fetch({ variables: { id }, fetchPolicy: 'network-only' })
+      .fetch({ variables: { id }, fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.findAddress ?? null) as AddressFieldsFragment | null));
   }
 
@@ -43,7 +43,7 @@ export class AddressApiService {
         const savedAddress = result.data?.saveAddress;
 
         if (!savedAddress) {
-          throw new Error('saveAddress returned no data');
+          throw new Error("saveAddress returned no data");
         }
 
         return savedAddress;
@@ -56,8 +56,8 @@ export class AddressApiService {
       map((result) => {
         const wasDeleted = result.data?.deleteAddress;
 
-        if (typeof wasDeleted !== 'boolean') {
-          throw new Error('deleteAddress returned no data');
+        if (typeof wasDeleted !== "boolean") {
+          throw new Error("deleteAddress returned no data");
         }
 
         return wasDeleted;
@@ -65,4 +65,3 @@ export class AddressApiService {
     );
   }
 }
-

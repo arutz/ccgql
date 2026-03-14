@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { inject, Injectable } from "@angular/core";
+import { map, Observable } from "rxjs";
 
 import {
   CityFieldsFragment,
@@ -8,10 +8,10 @@ import {
   FindCityGQL,
   ListCitiesGQL,
   SaveCityGQL,
-} from '../../generated/graphql';
+} from "../../generated/graphql";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class CityApiService {
   private readonly listCitiesGql = inject(ListCitiesGQL);
@@ -21,19 +21,19 @@ export class CityApiService {
 
   listCities(): Observable<CityFieldsFragment[]> {
     return this.listCitiesGql
-      .fetch({ fetchPolicy: 'network-only' })
+      .fetch({ fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.listCities ?? []) as CityFieldsFragment[]));
   }
 
   watchCities(): Observable<CityFieldsFragment[]> {
     return this.listCitiesGql
-      .watch({ fetchPolicy: 'cache-and-network' })
+      .watch({ fetchPolicy: "cache-and-network" })
       .valueChanges.pipe(map(({ data }) => (data?.listCities ?? []) as CityFieldsFragment[]));
   }
 
   findCity(id: number): Observable<CityFieldsFragment | null> {
     return this.findCityGql
-      .fetch({ variables: { id }, fetchPolicy: 'network-only' })
+      .fetch({ variables: { id }, fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.findCity ?? null) as CityFieldsFragment | null));
   }
 
@@ -43,7 +43,7 @@ export class CityApiService {
         const savedCity = result.data?.saveCity;
 
         if (!savedCity) {
-          throw new Error('saveCity returned no data');
+          throw new Error("saveCity returned no data");
         }
 
         return savedCity;
@@ -56,8 +56,8 @@ export class CityApiService {
       map((result) => {
         const wasDeleted = result.data?.deleteCity;
 
-        if (typeof wasDeleted !== 'boolean') {
-          throw new Error('deleteCity returned no data');
+        if (typeof wasDeleted !== "boolean") {
+          throw new Error("deleteCity returned no data");
         }
 
         return wasDeleted;
@@ -65,4 +65,3 @@ export class CityApiService {
     );
   }
 }
-

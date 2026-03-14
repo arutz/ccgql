@@ -1,4 +1,4 @@
-import { gql } from 'apollo-angular';
+import { gql } from "apollo-angular";
 
 export const CITY_FIELDS_FRAGMENT = gql`
   fragment CityFields on City {
@@ -43,4 +43,3 @@ export const DELETE_CITY_MUTATION = gql`
     deleteCity(id: $id)
   }
 `;
-

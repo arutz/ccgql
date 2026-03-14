@@ -1,4 +1,4 @@
-import { gql } from 'apollo-angular';
+import { gql } from "apollo-angular";
 
 export const ADDRESS_FIELDS_FRAGMENT = gql`
   fragment AddressFields on Address {
@@ -46,4 +46,3 @@ export const DELETE_ADDRESS_MUTATION = gql`
     deleteAddress(id: $id)
   }
 `;
-
