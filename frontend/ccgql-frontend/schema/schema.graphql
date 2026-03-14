@@ -1,0 +1,113 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"Marks the field, argument, input field or enum value as deprecated"
+directive @deprecated(
+  "The reason for the deprecation"
+  reason: String! = "No longer supported"
+) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+
+"This directive disables error propagation when a non nullable field returns null for the given operation."
+directive @experimental_disableErrorPropagation on QUERY | MUTATION | SUBSCRIPTION
+
+"Directs the executor to include this field or fragment only when the `if` argument is true"
+directive @include(
+  "Included when true."
+  if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Indicates an Input Object is a OneOf Input Object."
+directive @oneOf on INPUT_OBJECT
+
+"Directs the executor to skip this field or fragment when the `if` argument is true."
+directive @skip(
+  "Skipped when true."
+  if: Boolean!
+) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"Exposes a URL that specifies the behaviour of this scalar."
+directive @specifiedBy(
+  "The URL that specifies the behaviour of this scalar."
+  url: String!
+) on SCALAR
+
+type Address {
+  cityId: Int!
+  id: Int
+  personId: Int!
+  state: String!
+  street: String!
+  zipCode: String!
+}
+
+type City {
+  country: String!
+  id: Int
+  name: String!
+}
+
+type Mutation {
+  deleteAddress(id: Int!): Boolean!
+  deleteCity(id: Int!): Boolean!
+  deletePerson(id: Int!): Boolean!
+  saveAddress(person: AddressInput!): Address!
+  saveCity(person: CityInput!): City!
+  savePerson(person: PersonInput!): Person!
+}
+
+type Person {
+  dateOfBirth: Date!
+  email: String!
+  firstName: String!
+  id: Int
+  lastName: String!
+  occupation: Occupation!
+  phone: String!
+}
+
+type Query {
+  findAddress(id: Int!): Address
+  findCity(id: Int!): City
+  findPerson(id: Int!): Person
+  listAddresses: [Address!]!
+  listCities: [City!]!
+  listPersons: [Person!]!
+}
+
+enum Occupation {
+  ARTIST
+  DOCTOR
+  ENGINEER
+  OTHER
+  TEACHER
+}
+
+"java.util.Date serialized as an ISO-8601 instant in UTC"
+scalar Date
+
+input AddressInput {
+  cityId: Int!
+  id: Int
+  personId: Int!
+  state: String!
+  street: String!
+  zipCode: String!
+}
+
+input CityInput {
+  country: String!
+  id: Int
+  name: String!
+}
+
+input PersonInput {
+  dateOfBirth: Date!
+  email: String!
+  firstName: String!
+  id: Int
+  lastName: String!
+  occupation: Occupation!
+  phone: String!
+}
