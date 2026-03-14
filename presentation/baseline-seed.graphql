@@ -1,0 +1,217 @@
+# Baseline seed data for GraphiQL
+#
+# Execute the sections in this order:
+#  1) SeedCities
+#  2) SeedPersons
+#  3) SeedAddresses
+#  4) VerifySeed
+#
+# Notes:
+# - saveCity and saveAddress currently use the argument name `person` in the schema.
+#   That matches the backend code and is intentional for now.
+# - dateOfBirth uses the custom GraphQL scalar `Date` and expects ISO-8601 UTC strings.
+# - This file assumes fixed IDs 1..4 for the freshly created cities and persons:
+#   Cities  : Berlin=1, Hamburg=2, Munich=3, Cologne=4
+#   Persons : Ada=1, Marie=2, Grace=3, Pablo=4
+# - Re-running these operations will create additional rows unless you adapt them to updates.
+
+fragment CityFields on City {
+  id
+  name
+  country
+}
+
+fragment PersonFields on Person {
+  id
+  firstName
+  lastName
+  email
+  phone
+  occupation
+  dateOfBirth
+}
+
+fragment AddressFields on Address {
+  id
+  personId
+  street
+  cityId
+  state
+  zipCode
+}
+
+mutation SeedCities {
+  berlin: saveCity(person: { name: "Berlin", country: "Germany" }) {
+    ...CityFields
+  }
+  hamburg: saveCity(person: { name: "Hamburg", country: "Germany" }) {
+    ...CityFields
+  }
+  munich: saveCity(person: { name: "Munich", country: "Germany" }) {
+    ...CityFields
+  }
+  cologne: saveCity(person: { name: "Cologne", country: "Germany" }) {
+    ...CityFields
+  }
+}
+
+mutation SeedPersons {
+  ada: savePerson(
+    person: {
+      firstName: "Ada"
+      lastName: "Lovelace"
+      email: "ada.lovelace@example.com"
+      phone: "+49-1001"
+      occupation: ENGINEER
+      dateOfBirth: "1815-12-10T00:00:00Z"
+    }
+  ) {
+    ...PersonFields
+  }
+  marie: savePerson(
+    person: {
+      firstName: "Marie"
+      lastName: "Curie"
+      email: "marie.curie@example.com"
+      phone: "+49-1002"
+      occupation: DOCTOR
+      dateOfBirth: "1867-11-07T00:00:00Z"
+    }
+  ) {
+    ...PersonFields
+  }
+  grace: savePerson(
+    person: {
+      firstName: "Grace"
+      lastName: "Hopper"
+      email: "grace.hopper@example.com"
+      phone: "+49-1003"
+      occupation: TEACHER
+      dateOfBirth: "1906-12-09T00:00:00Z"
+    }
+  ) {
+    ...PersonFields
+  }
+  pablo: savePerson(
+    person: {
+      firstName: "Pablo"
+      lastName: "Picasso"
+      email: "pablo.picasso@example.com"
+      phone: "+49-1004"
+      occupation: ARTIST
+      dateOfBirth: "1881-10-25T00:00:00Z"
+    }
+  ) {
+    ...PersonFields
+  }
+}
+
+# Distribution plan:
+# - Ada   -> Berlin, Hamburg
+# - Marie -> Munich, Cologne
+# - Grace -> Berlin, Munich
+# - Pablo -> Hamburg, Cologne
+# This gives each city exactly 2 addresses.
+mutation SeedAddresses {
+  adaHome: saveAddress(
+    person: {
+      personId: 1
+      street: "Analytical Engine Street 1"
+      cityId: 1
+      state: "Berlin"
+      zipCode: "10115"
+    }
+  ) {
+    ...AddressFields
+  }
+  adaOffice: saveAddress(
+    person: {
+      personId: 1
+      street: "Computation Avenue 2"
+      cityId: 2
+      state: "Hamburg"
+      zipCode: "20095"
+    }
+  ) {
+    ...AddressFields
+  }
+  marieHome: saveAddress(
+    person: {
+      personId: 2
+      street: "Radium Platz 3"
+      cityId: 3
+      state: "Bavaria"
+      zipCode: "80331"
+    }
+  ) {
+    ...AddressFields
+  }
+  marieOffice: saveAddress(
+    person: {
+      personId: 2
+      street: "Laboratory Ring 4"
+      cityId: 4
+      state: "North Rhine-Westphalia"
+      zipCode: "50667"
+    }
+  ) {
+    ...AddressFields
+  }
+  graceHome: saveAddress(
+    person: {
+      personId: 3
+      street: "Compiler Lane 5"
+      cityId: 1
+      state: "Berlin"
+      zipCode: "10117"
+    }
+  ) {
+    ...AddressFields
+  }
+  graceOffice: saveAddress(
+    person: {
+      personId: 3
+      street: "Cobol Street 6"
+      cityId: 3
+      state: "Bavaria"
+      zipCode: "80539"
+    }
+  ) {
+    ...AddressFields
+  }
+  pabloHome: saveAddress(
+    person: {
+      personId: 4
+      street: "Cubism Alley 7"
+      cityId: 2
+      state: "Hamburg"
+      zipCode: "20457"
+    }
+  ) {
+    ...AddressFields
+  }
+  pabloStudio: saveAddress(
+    person: {
+      personId: 4
+      street: "Blue Period Way 8"
+      cityId: 4
+      state: "North Rhine-Westphalia"
+      zipCode: "50670"
+    }
+  ) {
+    ...AddressFields
+  }
+}
+
+query VerifySeed {
+  cities: listCities {
+    ...CityFields
+  }
+  persons: listPersons {
+    ...PersonFields
+  }
+  addresses: listAddresses {
+    ...AddressFields
+  }
+}
+

@@ -11,6 +11,7 @@ object CustomSchemaGeneratorHooks : SchemaGeneratorHooks {
     override fun willGenerateGraphQLType(type: KType) =
         when (type.classifier as? KClass<*>) {
             Date::class -> graphQLDateScalar
+            UUID::class -> graphQLUUIDScalar
             else -> super.willGenerateGraphQLType(type)
         }
 }

@@ -5,6 +5,7 @@ import com.expediagroup.graphql.server.operations.Query
 import org.slashdev.demo.ccgql.model.City
 import org.slashdev.demo.ccgql.repository.CityRepository
 
+@Suppress("unused") // endpoint for gql
 class CityQuery(val cityRepository: CityRepository) : Query {
     fun findCity(id: Int): City? =
         cityRepository.findById(id)
@@ -12,6 +13,7 @@ class CityQuery(val cityRepository: CityRepository) : Query {
     fun listCities(): List<City> = cityRepository.findAll()
 }
 
+@Suppress("unused") // endpoint for gql
 class CityMutation(val cityRepository: CityRepository) : Mutation {
     fun saveCity(person: City) = cityRepository.save(person)
 
