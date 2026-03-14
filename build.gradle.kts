@@ -30,5 +30,6 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:3.4.1")
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.mockk)
 
 }
