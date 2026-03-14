@@ -18,6 +18,7 @@ import org.slashdev.demo.ccgql.schema.tables.AddressTable
 import org.slashdev.demo.ccgql.schema.tables.CityTable
 import org.slashdev.demo.ccgql.schema.tables.PersonTable
 import java.util.UUID
+import java.util.Date
 
 class ExposedRepositoriesTest {
     private lateinit var database: Database
@@ -85,7 +86,7 @@ class ExposedRepositoriesTest {
                 email = "ada@example.com",
                 phone = "+49-111",
                 occupation = Occupation.ENGINEER,
-                dateOfBirth = 1_234_567_890L,
+                dateOfBirth = Date(1_234_567_890L),
             )
         )
 
@@ -106,7 +107,7 @@ class ExposedRepositoriesTest {
                 email = "grace@example.com",
                 phone = "+49-222",
                 occupation = Occupation.TEACHER,
-                dateOfBirth = 9_876_543_210L,
+                dateOfBirth = Date(9_876_543_210L),
             )
         )
         val savedUpdated = personRepository.save(savedNew.copy(phone = "+49-333"))
@@ -129,7 +130,7 @@ class ExposedRepositoriesTest {
                 email = "linus@example.com",
                 phone = "+49-444",
                 occupation = Occupation.OTHER,
-                dateOfBirth = 123_123_123L,
+                dateOfBirth = Date(123_123_123L),
             )
         )
 

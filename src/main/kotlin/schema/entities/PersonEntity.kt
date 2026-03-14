@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.slashdev.demo.ccgql.model.Person
 import org.slashdev.demo.ccgql.schema.tables.PersonTable
+import java.util.*
 
 class PersonEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<PersonEntity>(PersonTable)
@@ -23,7 +24,7 @@ class PersonEntity(id: EntityID<Int>) : IntEntity(id) {
         email = email,
         phone = phone,
         occupation = occupation,
-        dateOfBirth = dateOfBirth,
+        dateOfBirth = Date(dateOfBirth),
     )
 }
 

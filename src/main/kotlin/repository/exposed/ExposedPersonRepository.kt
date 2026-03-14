@@ -20,7 +20,7 @@ class ExposedPersonRepository(
             email = model.email
             phone = model.phone
             occupation = model.occupation
-            dateOfBirth = model.dateOfBirth
+            dateOfBirth = model.dateOfBirth.time
         }
     }
 
@@ -31,7 +31,7 @@ class ExposedPersonRepository(
             email = model.email
             phone = model.phone
             occupation = model.occupation
-            dateOfBirth = model.dateOfBirth
+            dateOfBirth = model.dateOfBirth.time
         }
     }
 
