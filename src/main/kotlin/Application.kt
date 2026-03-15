@@ -11,6 +11,7 @@ fun Application.module() {
     configurePostgres()
     configureDatabase()
     configureRepositories()
+    configureCors()
     configureGraphQl()
     configureRooting()
 }

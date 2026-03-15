@@ -167,6 +167,11 @@ class ExposedRepositoriesTest {
 
         assertEquals(savedNew.id, savedUpdated.id)
         assertEquals("Updated Street 3", savedUpdated.street)
+        assertEquals(
+            listOf(createdId, assertNotNull(savedNew.id)).sorted(),
+            addressRepository.findByPersonId(assertNotNull(person.id)).map { assertNotNull(it.id) }.sorted()
+        )
+        assertTrue(addressRepository.findByPersonId(9999).isEmpty())
         assertEquals(2, addressRepository.findAll().size)
         assertTrue(addressRepository.delete(createdId))
         assertNull(addressRepository.findById(createdId))

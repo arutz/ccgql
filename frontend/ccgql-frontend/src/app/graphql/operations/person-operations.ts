@@ -1,5 +1,24 @@
 import { gql } from "apollo-angular";
 
+export const PERSON_SUMMARY_FRAGMENT = gql`
+  fragment PersonSummary on Person {
+    id
+    firstName
+    lastName
+    dateOfBirth
+  }
+`;
+
+export const LIST_PERSONS_SUMMARY_QUERY = gql`
+  query ListPersonsSummary {
+    listPersons {
+      ...PersonSummary
+    }
+  }
+
+  ${PERSON_SUMMARY_FRAGMENT}
+`;
+
 export const PERSON_FIELDS_FRAGMENT = gql`
   fragment PersonFields on Person {
     id

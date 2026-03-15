@@ -4,18 +4,27 @@ import com.expediagroup.graphql.server.operations.Mutation
 import com.expediagroup.graphql.server.operations.Query
 import org.slashdev.demo.ccgql.model.Person
 import org.slashdev.demo.ccgql.repository.PersonRepository
+import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchema
+import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchemaSupport
+import org.slashdev.demo.ccgql.schema.gql.domain.toSchema
 
 @Suppress("unused") // endpoint for gql
-class PersonQuery(val personRepository: PersonRepository) : Query {
-    fun findPerson(id: Int): Person? =
-        personRepository.findById(id)
+class PersonQuery(
+    private val personRepository: PersonRepository,
+    private val personSchemaSupport: PersonSchemaSupport,
+) : Query {
+    fun findPerson(id: Int): PersonSchema? =
+        personRepository.findById(id)?.toSchema(personSchemaSupport)
 
-    fun listPersons(): List<Person> = personRepository.findAll()
+    fun listPersons(): List<PersonSchema> = personRepository.findAll().map { it.toSchema(personSchemaSupport) }
 }
 
 @Suppress("unused") // endpoint for gql
-class PersonMutation(val personRepository: PersonRepository) : Mutation {
-    fun savePerson(person: Person) = personRepository.save(person)
+class PersonMutation(
+    private val personRepository: PersonRepository,
+    private val personSchemaSupport: PersonSchemaSupport,
+) : Mutation {
+    fun savePerson(person: Person): PersonSchema = personRepository.save(person).toSchema(personSchemaSupport)
 
     fun deletePerson(id: Int) = personRepository.delete(id)
 }

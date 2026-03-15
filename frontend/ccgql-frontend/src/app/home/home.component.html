@@ -1,0 +1,79 @@
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+
+  <!-- Persons Section -->
+  <section class="mb-12" aria-labelledby="persons-heading">
+    <h1 id="persons-heading" class="text-3xl font-bold mb-6">Personenübersicht</h1>
+
+    @if (personsLoading()) {
+      <div class="flex justify-center py-8">
+        <mat-spinner diameter="48" aria-label="Personen werden geladen" />
+      </div>
+    } @else if (personsError()) {
+      <p class="text-red-600" role="alert">Fehler beim Laden der Personen.</p>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (person of persons(); track person.id) {
+          <a
+            [routerLink]="['/persons', person.id]"
+            class="block no-underline text-inherit"
+            aria-label="{{ person.firstName }} {{ person.lastName }} – Details anzeigen"
+          >
+            <mat-card class="h-full transition-shadow hover:shadow-lg cursor-pointer">
+              <mat-card-content class="pt-4">
+                <p class="font-semibold text-lg">{{ person.firstName }} {{ person.lastName }}</p>
+                <p class="text-sm text-gray-500 mt-1">
+                  {{ person.dateOfBirth | date : "dd.MM.yyyy" : "UTC" }}
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </a>
+        }
+      </div>
+
+      <div class="mt-6">
+        <a mat-button color="primary" routerLink="/persons/new">
+          <mat-icon>add</mat-icon>
+          Neue Person hinzufügen
+        </a>
+      </div>
+    }
+  </section>
+
+  <!-- Cities Section -->
+  <section aria-labelledby="cities-heading">
+    <h2 id="cities-heading" class="text-3xl font-bold mb-6">Städteübersicht</h2>
+
+    @if (citiesLoading()) {
+      <div class="flex justify-center py-8">
+        <mat-spinner diameter="48" aria-label="Städte werden geladen" />
+      </div>
+    } @else if (citiesError()) {
+      <p class="text-red-600" role="alert">Fehler beim Laden der Städte.</p>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (city of cities(); track city.id) {
+          <a
+            [routerLink]="['/cities', city.id]"
+            class="block no-underline text-inherit"
+            aria-label="{{ city.name }} – Details anzeigen"
+          >
+            <mat-card class="h-full transition-shadow hover:shadow-lg cursor-pointer">
+              <mat-card-content class="pt-4">
+                <p class="font-semibold text-lg">{{ city.name }}</p>
+                <p class="text-sm text-gray-500 mt-1">{{ city.country }}</p>
+              </mat-card-content>
+            </mat-card>
+          </a>
+        }
+      </div>
+
+      <div class="mt-6">
+        <a mat-button color="primary" routerLink="/cities/new">
+          <mat-icon>add</mat-icon>
+          Neue Stadt hinzufügen
+        </a>
+      </div>
+    }
+  </section>
+
+</div>
