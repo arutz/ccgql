@@ -14,9 +14,11 @@ import io.mockk.slot
 import io.mockk.verify
 import org.slashdev.demo.ccgql.model.Occupation
 import org.slashdev.demo.ccgql.model.Person
+import org.slashdev.demo.ccgql.model.Address
 import org.slashdev.demo.ccgql.repository.AddressRepository
 import org.slashdev.demo.ccgql.repository.CityRepository
 import org.slashdev.demo.ccgql.repository.PersonRepository
+import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchemaSupport
 import java.time.Instant
 import java.util.*
 import kotlin.test.Test
@@ -37,6 +39,15 @@ class GraphQLRoutingTest {
         dateOfBirth = Date.from(Instant.parse("1815-12-10T00:00:00Z")),
     )
 
+    private val existingAddress = Address(
+        id = 1,
+        personId = 1,
+        street = "Analytical Engine Street 1",
+        cityId = 1,
+        state = "London",
+        zipCode = "A1 1AA",
+    )
+
     private fun createPersonRepositoryMock(initialPersons: List<Person> = listOf(existingPerson)): PersonRepository {
         val persons = initialPersons.toMutableList()
         return mockk {
@@ -55,12 +66,18 @@ class GraphQLRoutingTest {
     private fun Application.configureTestGraphQlApp(
         personRepository: PersonRepository = createPersonRepositoryMock(),
         cityRepository: CityRepository = mockk(relaxed = true),
-        addressRepository: AddressRepository = mockk(relaxed = true),
+        addressRepository: AddressRepository = mockk {
+            every { findByPersonId(existingPerson.id!!) } returns listOf(existingAddress)
+            every { findByPersonId(match { it != existingPerson.id }) } returns emptyList()
+        },
     ) {
+        val personSchemaSupport = PersonSchemaSupport(addressRepository)
+
         dependencies {
             provide<PersonRepository> { personRepository }
             provide<CityRepository> { cityRepository }
             provide<AddressRepository> { addressRepository }
+            provide<PersonSchemaSupport> { personSchemaSupport }
         }
 
         configureCors()
@@ -138,6 +155,31 @@ class GraphQLRoutingTest {
         )
         assertEquals(Date.from(Instant.parse("1906-12-09T00:00:00Z")), savedPerson.captured.dateOfBirth)
         verify(exactly = 1) { repository.save(any()) }
+    }
+
+    @Test
+    fun graphqlPostRouteResolvesAddressesForPersonSchema() = testGraphQlApplication {
+        val addressRepository = mockk<AddressRepository> {
+            every { findByPersonId(existingPerson.id!!) } returns listOf(existingAddress)
+            every { findByPersonId(match { it != existingPerson.id }) } returns emptyList()
+        }
+
+        application {
+            configureTestGraphQlApp(addressRepository = addressRepository)
+        }
+
+        val response = client.post("/graphql") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                """{"query":"query { listPersons { id addresses { id street zipCode } } }"}"""
+            )
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val payload = objectMapper.readTree(response.bodyAsText())
+        assertEquals("Analytical Engine Street 1", payload.at("/data/listPersons/0/addresses/0/street").asText())
+        assertEquals("A1 1AA", payload.at("/data/listPersons/0/addresses/0/zipCode").asText())
+        verify(exactly = 1) { addressRepository.findByPersonId(existingPerson.id!!) }
     }
 
     @Test

@@ -9,14 +9,17 @@ import org.slashdev.demo.ccgql.repository.PersonRepository
 import org.slashdev.demo.ccgql.repository.exposed.ExposedAddressRepository
 import org.slashdev.demo.ccgql.repository.exposed.ExposedCityRepository
 import org.slashdev.demo.ccgql.repository.exposed.ExposedPersonRepository
+import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchemaSupport
 
 fun Application.configureRepositories() {
     val database: Database by dependencies
+    val addressRepository: AddressRepository by dependencies
 
     dependencies {
         provide<CityRepository> { ExposedCityRepository(database) }
         provide<PersonRepository> { ExposedPersonRepository(database) }
         provide<AddressRepository> { ExposedAddressRepository(database) }
+        provide<PersonSchemaSupport> { PersonSchemaSupport(addressRepository) }
     }
 }
 

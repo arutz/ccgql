@@ -7,11 +7,16 @@ import org.slashdev.demo.ccgql.repository.AddressRepository
 import org.slashdev.demo.ccgql.schema.entities.AddressEntity
 import org.slashdev.demo.ccgql.schema.entities.CityEntity
 import org.slashdev.demo.ccgql.schema.entities.PersonEntity
+import org.slashdev.demo.ccgql.schema.tables.AddressTable
 
 class ExposedAddressRepository(
     database: Database,
 ) : AbstractExposedDaoRepository<Address, AddressEntity>(database), AddressRepository {
     override val entityClass: IntEntityClass<AddressEntity> = AddressEntity
+
+    override fun findByPersonId(personId: Int): List<Address> = dbQuery {
+        entityClass.find { AddressTable.personId eq personId }.map(::toModel)
+    }
 
     override fun toModel(entity: AddressEntity): Address = entity.toModel()
 

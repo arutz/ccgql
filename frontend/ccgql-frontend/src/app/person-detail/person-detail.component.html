@@ -28,7 +28,7 @@
           <p class="text-red-600 mb-4" role="alert">{{ error() }}</p>
         }
 
-        <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <form [formGroup]="form" novalidate>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -95,7 +95,8 @@
               <button
                 mat-raised-button
                 color="primary"
-                type="submit"
+                type="button"
+                (click)="save()"
                 [disabled]="saving()"
                 aria-label="Datensatz speichern"
               >
@@ -138,6 +139,135 @@
           </div>
 
         </form>
+
+        <section class="mt-8 border-t border-gray-200 pt-6" aria-labelledby="addresses-heading">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 id="addresses-heading" class="text-xl font-semibold">Adressen</h2>
+
+              @if (addressesLoading()) {
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <mat-spinner diameter="20" aria-label="Adressen werden geladen" />
+                  <span>Adressen werden geladen</span>
+                </div>
+              }
+            </div>
+
+            @if (addressError()) {
+              <p class="text-red-600 mb-4" role="alert">{{ addressError() }}</p>
+            }
+
+            @if (citiesError()) {
+              <p class="text-red-600 mb-4" role="alert">{{ citiesError() }}</p>
+            }
+
+            @if (!hasSavedPerson()) {
+              <p class="text-sm text-gray-600 mb-4">
+                Bitte speichern Sie die Person zuerst, bevor Sie Adressen hinzufügen.
+              </p>
+            } @else {
+              @if (!addressesLoading() && addresses().length === 0) {
+                <p class="text-sm text-gray-600 mb-4">Für diese Person sind noch keine Adressen hinterlegt.</p>
+              }
+
+              @if (addresses().length > 0) {
+                <div class="space-y-3 mb-6">
+                  @for (address of addresses(); track address.id ?? $index) {
+                    <div class="border border-gray-200 rounded-lg p-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p class="font-semibold">{{ address.street }}</p>
+                        <p class="text-sm text-gray-600">{{ address.zipCode }} {{ address.state }}</p>
+                        <p class="text-sm text-gray-600">{{ cityLabel(address.cityId) }}</p>
+                      </div>
+
+                      <button
+                        mat-stroked-button
+                        color="warn"
+                        type="button"
+                        (click)="deleteAddress(address.id)"
+                        [disabled]="isDeletingAddress(address.id)"
+                        aria-label="Adresse löschen"
+                      >
+                        @if (isDeletingAddress(address.id)) {
+                          <mat-spinner diameter="20" class="inline-block mr-2" />
+                        }
+                        <mat-icon>delete</mat-icon>
+                        Löschen
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+
+              <form [formGroup]="addressForm" (ngSubmit)="addAddress()" novalidate class="border border-gray-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">Neue Adresse hinzufügen</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <mat-form-field appearance="outline" class="w-full sm:col-span-2">
+                    <mat-label>Straße</mat-label>
+                    <input matInput formControlName="street" autocomplete="street-address" />
+                    @if (addressForm.controls.street.hasError('required') && addressForm.controls.street.touched) {
+                      <mat-error>Straße ist erforderlich.</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>PLZ</mat-label>
+                    <input matInput formControlName="zipCode" autocomplete="postal-code" />
+                    @if (addressForm.controls.zipCode.hasError('required') && addressForm.controls.zipCode.touched) {
+                      <mat-error>PLZ ist erforderlich.</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Bundesland / Region</mat-label>
+                    <input matInput formControlName="state" autocomplete="address-level1" />
+                    @if (addressForm.controls.state.hasError('required') && addressForm.controls.state.touched) {
+                      <mat-error>Bundesland oder Region ist erforderlich.</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-full sm:col-span-2">
+                    <mat-label>Stadt</mat-label>
+                    <mat-select
+                      formControlName="cityId"
+                      [disabled]="citiesLoading() || sortedCities().length === 0"
+                    >
+                      @for (city of sortedCities(); track city.id) {
+                        <mat-option [value]="city.id">{{ city.name }} ({{ city.country }})</mat-option>
+                      }
+                    </mat-select>
+                    @if (addressForm.controls.cityId.hasError('required') && addressForm.controls.cityId.touched) {
+                      <mat-error>Bitte wählen Sie eine Stadt aus.</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                @if (citiesLoading()) {
+                  <p class="text-sm text-gray-600 mt-4">Städte werden geladen…</p>
+                } @else if (sortedCities().length === 0) {
+                  <p class="text-sm text-amber-700 mt-4">
+                    Es sind noch keine Städte vorhanden. Bitte legen Sie zuerst eine Stadt an.
+                  </p>
+                }
+
+                <div class="flex flex-wrap gap-3 mt-4">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="addressSaving() || addressForm.invalid || citiesLoading() || sortedCities().length === 0"
+                    aria-label="Adresse hinzufügen"
+                  >
+                    @if (addressSaving()) {
+                      <mat-spinner diameter="20" class="inline-block mr-2" />
+                    }
+                    <mat-icon>add_location_alt</mat-icon>
+                    Adresse hinzufügen
+                  </button>
+                </div>
+              </form>
+            }
+        </section>
       }
     </mat-card-content>
   </mat-card>

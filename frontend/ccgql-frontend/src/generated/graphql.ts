@@ -101,6 +101,7 @@ export enum Occupation {
 
 export type Person = {
   __typename?: 'Person';
+  addresses: Array<Address>;
   dateOfBirth: Scalars['Date']['output'];
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
