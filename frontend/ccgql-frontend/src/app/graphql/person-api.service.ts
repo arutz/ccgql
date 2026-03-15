@@ -3,14 +3,23 @@ import { map, Observable } from "rxjs";
 
 import {
   DeletePersonGQL,
+  FindPersonDetailGQL,
   FindPersonGQL,
+  FindPersonDetailQuery,
   ListPersonsGQL,
   ListPersonsSummaryGQL,
+  Person,
   PersonFieldsFragment,
   PersonInput,
   PersonSummaryFragment,
   SavePersonGQL,
+  CityFieldsFragment,
 } from "../../generated/graphql";
+
+export type PersonDetailResult = {
+  person: (PersonFieldsFragment & Pick<Person, "addresses">) | null;
+  cities: CityFieldsFragment[];
+};
 
 @Injectable({
   providedIn: "root",
@@ -18,6 +27,7 @@ import {
 export class PersonApiService {
   private readonly listPersonsGql = inject(ListPersonsGQL);
   private readonly listPersonsSummaryGql = inject(ListPersonsSummaryGQL);
+  private readonly findPersonDetailGql = inject(FindPersonDetailGQL);
   private readonly findPersonGql = inject(FindPersonGQL);
   private readonly savePersonGql = inject(SavePersonGQL);
   private readonly deletePersonGql = inject(DeletePersonGQL);
@@ -44,6 +54,12 @@ export class PersonApiService {
     return this.findPersonGql
       .fetch({ variables: { id }, fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.findPerson ?? null) as PersonFieldsFragment | null));
+  }
+
+  findPersonDetail(id: number): Observable<PersonDetailResult> {
+    return this.findPersonDetailGql.fetch({ variables: { id }, fetchPolicy: "network-only" }).pipe(
+      map(({ data }) => toPersonDetailResult(data)),
+    );
   }
 
   savePerson(person: PersonInput): Observable<PersonFieldsFragment> {
@@ -74,3 +90,11 @@ export class PersonApiService {
     );
   }
 }
+
+function toPersonDetailResult(data: FindPersonDetailQuery | null | undefined): PersonDetailResult {
+  return {
+    person: (data?.findPerson ?? null) as PersonDetailResult["person"],
+    cities: (data?.listCities ?? []) as CityFieldsFragment[],
+  };
+}
+

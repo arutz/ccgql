@@ -19,7 +19,6 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatCardModule } from "@angular/material/card";
 
 import { AddressApiService } from "../graphql/address-api.service";
-import { CityApiService } from "../graphql/city-api.service";
 import { PersonApiService } from "../graphql/person-api.service";
 import {
   AddressFieldsFragment,
@@ -51,7 +50,6 @@ export class PersonDetailComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly addressApi = inject(AddressApiService);
-  private readonly cityApi = inject(CityApiService);
   private readonly personApi = inject(PersonApiService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -69,8 +67,9 @@ export class PersonDetailComponent implements OnInit {
   readonly cities = signal<CityFieldsFragment[]>([]);
   readonly citiesLoading = signal(false);
   readonly citiesError = signal<string | null>(null);
+  readonly personAvailable = signal(false);
 
-  readonly hasSavedPerson = computed(() => this.personId() !== null);
+  readonly hasSavedPerson = computed(() => this.personAvailable() && this.personId() !== null);
   readonly sortedCities = computed(() =>
     [...this.cities()].sort((left, right) => left.name.localeCompare(right.name, "de")),
   );
@@ -104,7 +103,6 @@ export class PersonDetailComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadCities();
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((paramMap) => {
       this.loadPersonFromRoute(paramMap.get("id"));
     });
@@ -157,6 +155,7 @@ export class PersonDetailComponent implements OnInit {
         }
 
         this.personId.set(savedPersonId);
+        this.personAvailable.set(true);
         this.patchForm(savedPerson);
         this.mode.set("read");
         this.form.disable();
@@ -165,8 +164,6 @@ export class PersonDetailComponent implements OnInit {
           this.router.navigate(["/persons", savedPersonId]);
           return;
         }
-
-        this.loadAddresses(savedPersonId);
       },
       error: () => {
         this.error.set("Fehler beim Speichern der Person.");
@@ -289,8 +286,12 @@ export class PersonDetailComponent implements OnInit {
   private loadPersonFromRoute(idParam: string | null): void {
     this.error.set(null);
     this.addressError.set(null);
+    this.citiesError.set(null);
+    this.personAvailable.set(false);
     this.addresses.set([]);
+    this.cities.set([]);
     this.addressesLoading.set(false);
+    this.citiesLoading.set(false);
     this.resetAddressForm();
 
     if (!idParam) {
@@ -319,14 +320,21 @@ export class PersonDetailComponent implements OnInit {
     this.personId.set(personId);
     this.mode.set("read");
     this.loading.set(true);
+    this.addressesLoading.set(true);
+    this.citiesLoading.set(true);
 
-    this.personApi.findPerson(personId).subscribe({
-      next: (person) => {
-        if (person) {
-          this.originalPerson = person;
-          this.patchForm(person);
+    this.personApi.findPersonDetail(personId).subscribe({
+      next: (detail) => {
+        this.cities.set(detail.cities);
+        this.citiesLoading.set(false);
+
+        if (detail.person) {
+          this.personAvailable.set(true);
+          this.originalPerson = detail.person;
+          this.patchForm(detail.person);
+          this.addresses.set(detail.person.addresses);
+          this.addressesLoading.set(false);
           this.form.disable();
-          this.loadAddresses(personId);
         } else {
           this.originalPerson = null;
           this.error.set("Person nicht gefunden.");
@@ -340,43 +348,13 @@ export class PersonDetailComponent implements OnInit {
         this.originalPerson = null;
         this.error.set("Fehler beim Laden der Person.");
         this.addressesLoading.set(false);
+        this.citiesLoading.set(false);
         this.loading.set(false);
         this.form.disable();
       },
     });
   }
 
-  private loadCities(): void {
-    this.citiesLoading.set(true);
-    this.citiesError.set(null);
-
-    this.cityApi.listCities().subscribe({
-      next: (cities) => {
-        this.cities.set(cities);
-        this.citiesLoading.set(false);
-      },
-      error: () => {
-        this.citiesError.set("Fehler beim Laden der Städte.");
-        this.citiesLoading.set(false);
-      },
-    });
-  }
-
-  private loadAddresses(personId: number): void {
-    this.addressesLoading.set(true);
-    this.addressError.set(null);
-
-    this.addressApi.listAddresses().subscribe({
-      next: (addresses) => {
-        this.addresses.set(addresses.filter((address) => address.personId === personId));
-        this.addressesLoading.set(false);
-      },
-      error: () => {
-        this.addressError.set("Fehler beim Laden der Adressen.");
-        this.addressesLoading.set(false);
-      },
-    });
-  }
 
   private resetPersonForm(): void {
     this.form.reset({

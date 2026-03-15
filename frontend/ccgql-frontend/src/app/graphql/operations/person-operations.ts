@@ -1,4 +1,6 @@
 import { gql } from "apollo-angular";
+import { ADDRESS_FIELDS_FRAGMENT } from "./address-operations";
+import { CITY_FIELDS_FRAGMENT } from "./city-operations";
 
 export const PERSON_SUMMARY_FRAGMENT = gql`
   fragment PersonSummary on Person {
@@ -49,6 +51,24 @@ export const FIND_PERSON_QUERY = gql`
   }
 
   ${PERSON_FIELDS_FRAGMENT}
+`;
+
+export const FIND_PERSON_DETAIL_QUERY = gql`
+  query FindPersonDetail($id: Int!) {
+    findPerson(id: $id) {
+      ...PersonFields
+      addresses {
+        ...AddressFields
+      }
+    }
+    listCities {
+      ...CityFields
+    }
+  }
+
+  ${PERSON_FIELDS_FRAGMENT}
+  ${ADDRESS_FIELDS_FRAGMENT}
+  ${CITY_FIELDS_FRAGMENT}
 `;
 
 export const SAVE_PERSON_MUTATION = gql`

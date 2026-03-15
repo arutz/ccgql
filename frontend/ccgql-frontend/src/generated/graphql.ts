@@ -223,6 +223,13 @@ export type FindPersonQueryVariables = Exact<{
 
 export type FindPersonQuery = { __typename?: 'Query', findPerson?: { __typename?: 'Person', id?: number | null, firstName: string, lastName: string, email: string, phone: string, occupation: Occupation, dateOfBirth: string } | null };
 
+export type FindPersonDetailQueryVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type FindPersonDetailQuery = { __typename?: 'Query', findPerson?: { __typename?: 'Person', id?: number | null, firstName: string, lastName: string, email: string, phone: string, occupation: Occupation, dateOfBirth: string, addresses: Array<{ __typename?: 'Address', id?: number | null, personId: number, street: string, cityId: number, state: string, zipCode: string }> } | null, listCities: Array<{ __typename?: 'City', id?: number | null, name: string, country: string }> };
+
 export type SavePersonMutationVariables = Exact<{
   person: PersonInput;
 }>;
@@ -462,6 +469,32 @@ export const FindPersonDocument = gql`
   })
   export class FindPersonGQL extends Apollo.Query<FindPersonQuery, FindPersonQueryVariables> {
     document = FindPersonDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const FindPersonDetailDocument = gql`
+    query FindPersonDetail($id: Int!) {
+  findPerson(id: $id) {
+    ...PersonFields
+    addresses {
+      ...AddressFields
+    }
+  }
+  listCities {
+    ...CityFields
+  }
+}
+    ${PersonFieldsFragmentDoc}
+${AddressFieldsFragmentDoc}
+${CityFieldsFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FindPersonDetailGQL extends Apollo.Query<FindPersonDetailQuery, FindPersonDetailQueryVariables> {
+    document = FindPersonDetailDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
