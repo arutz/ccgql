@@ -2,7 +2,7 @@ package org.slashdev.demo.ccgql.queries
 
 import com.expediagroup.graphql.server.operations.Mutation
 import com.expediagroup.graphql.server.operations.Query
-import org.slashdev.demo.ccgql.model.Person
+import org.slashdev.demo.ccgql.model.PersonBase
 import org.slashdev.demo.ccgql.repository.PersonRepository
 import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchema
 import org.slashdev.demo.ccgql.schema.gql.domain.PersonSchemaSupport
@@ -24,7 +24,8 @@ class PersonMutation(
     private val personRepository: PersonRepository,
     private val personSchemaSupport: PersonSchemaSupport,
 ) : Mutation {
-    fun savePerson(person: Person): PersonSchema = personRepository.save(person).toSchema(personSchemaSupport)
+    fun savePerson(personBase: PersonBase): PersonSchema =
+        personRepository.save(personBase).toSchema(personSchemaSupport)
 
     fun deletePerson(id: Int) = personRepository.delete(id)
 }

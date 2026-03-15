@@ -1,24 +1,17 @@
 package org.slashdev.demo.ccgql.repository.exposed
 
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slashdev.demo.ccgql.model.Address
 import org.slashdev.demo.ccgql.model.City
 import org.slashdev.demo.ccgql.model.Occupation
-import org.slashdev.demo.ccgql.model.Person
+import org.slashdev.demo.ccgql.model.PersonBase
 import org.slashdev.demo.ccgql.schema.tables.AddressTable
 import org.slashdev.demo.ccgql.schema.tables.CityTable
 import org.slashdev.demo.ccgql.schema.tables.PersonTable
-import java.util.UUID
-import java.util.Date
+import java.util.*
+import kotlin.test.*
 
 class ExposedRepositoriesTest {
     private lateinit var database: Database
@@ -80,7 +73,7 @@ class ExposedRepositoriesTest {
     @Test
     fun personRepositorySupportsCrudAndSave() {
         val created = personRepository.create(
-            Person(
+            PersonBase(
                 firstName = "Ada",
                 lastName = "Lovelace",
                 email = "ada@example.com",
@@ -101,7 +94,7 @@ class ExposedRepositoriesTest {
         assertEquals("ada.lovelace@example.com", updated?.email)
 
         val savedNew = personRepository.save(
-            Person(
+            PersonBase(
                 firstName = "Grace",
                 lastName = "Hopper",
                 email = "grace@example.com",
@@ -123,8 +116,8 @@ class ExposedRepositoriesTest {
     @Test
     fun addressRepositorySupportsCrudAndSave() {
         val city = cityRepository.create(City(name = "Cologne", country = "Germany"))
-        val person = personRepository.create(
-            Person(
+        val personBase = personRepository.create(
+            PersonBase(
                 firstName = "Linus",
                 lastName = "Torvalds",
                 email = "linus@example.com",
@@ -136,7 +129,7 @@ class ExposedRepositoriesTest {
 
         val created = addressRepository.create(
             Address(
-                personId = assertNotNull(person.id),
+                personId = assertNotNull(personBase.id),
                 street = "Main Street 1",
                 cityId = assertNotNull(city.id),
                 state = "NRW",
@@ -156,7 +149,7 @@ class ExposedRepositoriesTest {
 
         val savedNew = addressRepository.save(
             Address(
-                personId = assertNotNull(person.id),
+                personId = assertNotNull(personBase.id),
                 street = "Second Street 2",
                 cityId = assertNotNull(city.id),
                 state = "NRW",
@@ -169,7 +162,7 @@ class ExposedRepositoriesTest {
         assertEquals("Updated Street 3", savedUpdated.street)
         assertEquals(
             listOf(createdId, assertNotNull(savedNew.id)).sorted(),
-            addressRepository.findByPersonId(assertNotNull(person.id)).map { assertNotNull(it.id) }.sorted()
+            addressRepository.findByPersonId(assertNotNull(personBase.id)).map { assertNotNull(it.id) }.sorted()
         )
         assertTrue(addressRepository.findByPersonId(9999).isEmpty())
         assertEquals(2, addressRepository.findAll().size)

@@ -12,9 +12,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.slashdev.demo.ccgql.model.Occupation
-import org.slashdev.demo.ccgql.model.Person
 import org.slashdev.demo.ccgql.model.Address
+import org.slashdev.demo.ccgql.model.Occupation
+import org.slashdev.demo.ccgql.model.PersonBase
 import org.slashdev.demo.ccgql.repository.AddressRepository
 import org.slashdev.demo.ccgql.repository.CityRepository
 import org.slashdev.demo.ccgql.repository.PersonRepository
@@ -29,7 +29,7 @@ class GraphQLRoutingTest {
 
     private val objectMapper = ObjectMapper()
 
-    private val existingPerson = Person(
+    private val existingPersonBase = PersonBase(
         id = 1,
         firstName = "Ada",
         lastName = "Lovelace",
@@ -48,14 +48,14 @@ class GraphQLRoutingTest {
         zipCode = "A1 1AA",
     )
 
-    private fun createPersonRepositoryMock(initialPersons: List<Person> = listOf(existingPerson)): PersonRepository {
+    private fun createPersonRepositoryMock(initialPersons: List<PersonBase> = listOf(existingPersonBase)): PersonRepository {
         val persons = initialPersons.toMutableList()
         return mockk {
             every { findAll() } answers { persons.toList() }
             every { findById(any()) } answers { persons.firstOrNull { it.id == firstArg() } }
             every { save(any()) } answers {
-                val person = firstArg<Person>()
-                val saved = person.copy(id = person.id ?: ((persons.maxOfOrNull { it.id ?: 0 } ?: 0) + 1))
+                val personBase = firstArg<PersonBase>()
+                val saved = personBase.copy(id = personBase.id ?: ((persons.maxOfOrNull { it.id ?: 0 } ?: 0) + 1))
                 persons.removeIf { it.id == saved.id }
                 persons += saved
                 saved
@@ -67,8 +67,8 @@ class GraphQLRoutingTest {
         personRepository: PersonRepository = createPersonRepositoryMock(),
         cityRepository: CityRepository = mockk(relaxed = true),
         addressRepository: AddressRepository = mockk {
-            every { findByPersonId(existingPerson.id!!) } returns listOf(existingAddress)
-            every { findByPersonId(match { it != existingPerson.id }) } returns emptyList()
+            every { findByPersonId(existingPersonBase.id!!) } returns listOf(existingAddress)
+            every { findByPersonId(match { it != existingPersonBase.id }) } returns emptyList()
         },
     ) {
         val personSchemaSupport = PersonSchemaSupport(addressRepository)
@@ -126,10 +126,10 @@ class GraphQLRoutingTest {
     @Test
     fun graphqlPostRouteParsesDateScalarInput() = testGraphQlApplication {
         val repository = createPersonRepositoryMock()
-        val savedPerson = slot<Person>()
+        val savedPersonBase = slot<PersonBase>()
 
-        every { repository.save(capture(savedPerson)) } answers {
-            val person = savedPerson.captured
+        every { repository.save(capture(savedPersonBase)) } answers {
+            val person = savedPersonBase.captured
             person.copy(id = person.id ?: 2)
         }
 
@@ -153,15 +153,15 @@ class GraphQLRoutingTest {
             "1906-12-09T00:00:00Z",
             objectMapper.readTree(response.bodyAsText()).at("/data/savePerson/dateOfBirth").asText()
         )
-        assertEquals(Date.from(Instant.parse("1906-12-09T00:00:00Z")), savedPerson.captured.dateOfBirth)
+        assertEquals(Date.from(Instant.parse("1906-12-09T00:00:00Z")), savedPersonBase.captured.dateOfBirth)
         verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
     fun graphqlPostRouteResolvesAddressesForPersonSchema() = testGraphQlApplication {
         val addressRepository = mockk<AddressRepository> {
-            every { findByPersonId(existingPerson.id!!) } returns listOf(existingAddress)
-            every { findByPersonId(match { it != existingPerson.id }) } returns emptyList()
+            every { findByPersonId(existingPersonBase.id!!) } returns listOf(existingAddress)
+            every { findByPersonId(match { it != existingPersonBase.id }) } returns emptyList()
         }
 
         application {
@@ -179,7 +179,7 @@ class GraphQLRoutingTest {
         val payload = objectMapper.readTree(response.bodyAsText())
         assertEquals("Analytical Engine Street 1", payload.at("/data/listPersons/0/addresses/0/street").asText())
         assertEquals("A1 1AA", payload.at("/data/listPersons/0/addresses/0/zipCode").asText())
-        verify(exactly = 1) { addressRepository.findByPersonId(existingPerson.id!!) }
+        verify(exactly = 1) { addressRepository.findByPersonId(existingPersonBase.id!!) }
     }
 
     @Test

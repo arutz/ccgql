@@ -1,6 +1,6 @@
 package org.slashdev.demo.ccgql.repository
 
-import org.slashdev.demo.ccgql.model.Person
+import org.slashdev.demo.ccgql.model.PersonBase
 
-interface PersonRepository : CrudRepository<Person>
+interface PersonRepository : CrudRepository<PersonBase>
 
