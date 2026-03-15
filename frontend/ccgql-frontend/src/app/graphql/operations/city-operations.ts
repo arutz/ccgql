@@ -1,11 +1,29 @@
 import { gql } from 'apollo-angular';
 
+export const CITY_CARD_FIELDS_FRAGMENT = gql`
+  fragment CityCardFields on City {
+    id
+    name
+    country
+  }
+`;
+
 export const CITY_FIELDS_FRAGMENT = gql`
   fragment CityFields on City {
     id
     name
     country
   }
+`;
+
+export const LIST_CITIES_OVERVIEW_QUERY = gql`
+  query ListCitiesOverview {
+    listCities {
+      ...CityCardFields
+    }
+  }
+
+  ${CITY_CARD_FIELDS_FRAGMENT}
 `;
 
 export const LIST_CITIES_QUERY = gql`
@@ -43,4 +61,5 @@ export const DELETE_CITY_MUTATION = gql`
     deleteCity(id: $id)
   }
 `;
+
 

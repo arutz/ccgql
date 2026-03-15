@@ -1,0 +1,70 @@
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.item-card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.item-card:hover,
+.item-card:focus {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: 2px;
+}
+
+.card-detail {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.detail-label {
+  font-weight: 500;
+  margin-right: 0.25rem;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.error-message {
+  color: var(--mat-sys-error, #d32f2f);
+  padding: 1rem;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+}
+
+.empty-message {
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-style: italic;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+  margin: 2rem 0;
+}

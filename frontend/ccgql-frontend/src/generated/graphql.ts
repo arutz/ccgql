@@ -173,7 +173,14 @@ export type DeleteAddressMutationVariables = Exact<{
 
 export type DeleteAddressMutation = { __typename?: 'Mutation', deleteAddress: boolean };
 
+export type CityCardFieldsFragment = { __typename?: 'City', id?: number | null, name: string, country: string };
+
 export type CityFieldsFragment = { __typename?: 'City', id?: number | null, name: string, country: string };
+
+export type ListCitiesOverviewQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListCitiesOverviewQuery = { __typename?: 'Query', listCities: Array<{ __typename?: 'City', id?: number | null, name: string, country: string }> };
 
 export type ListCitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -201,7 +208,14 @@ export type DeleteCityMutationVariables = Exact<{
 
 export type DeleteCityMutation = { __typename?: 'Mutation', deleteCity: boolean };
 
+export type PersonCardFieldsFragment = { __typename?: 'Person', id?: number | null, firstName: string, lastName: string, dateOfBirth: string };
+
 export type PersonFieldsFragment = { __typename?: 'Person', id?: number | null, firstName: string, lastName: string, email: string, phone: string, occupation: Occupation, dateOfBirth: string };
+
+export type ListPersonsOverviewQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListPersonsOverviewQuery = { __typename?: 'Query', listPersons: Array<{ __typename?: 'Person', id?: number | null, firstName: string, lastName: string, dateOfBirth: string }> };
 
 export type ListPersonsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -239,11 +253,26 @@ export const AddressFieldsFragmentDoc = gql`
   zipCode
 }
     `;
+export const CityCardFieldsFragmentDoc = gql`
+    fragment CityCardFields on City {
+  id
+  name
+  country
+}
+    `;
 export const CityFieldsFragmentDoc = gql`
     fragment CityFields on City {
   id
   name
   country
+}
+    `;
+export const PersonCardFieldsFragmentDoc = gql`
+    fragment PersonCardFields on Person {
+  id
+  firstName
+  lastName
+  dateOfBirth
 }
     `;
 export const PersonFieldsFragmentDoc = gql`
@@ -327,6 +356,24 @@ export const DeleteAddressDocument = gql`
       super(apollo);
     }
   }
+export const ListCitiesOverviewDocument = gql`
+    query ListCitiesOverview {
+  listCities {
+    ...CityCardFields
+  }
+}
+    ${CityCardFieldsFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ListCitiesOverviewGQL extends Apollo.Query<ListCitiesOverviewQuery, ListCitiesOverviewQueryVariables> {
+    document = ListCitiesOverviewDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const ListCitiesDocument = gql`
     query ListCities {
   listCities {
@@ -392,6 +439,24 @@ export const DeleteCityDocument = gql`
   })
   export class DeleteCityGQL extends Apollo.Mutation<DeleteCityMutation, DeleteCityMutationVariables> {
     document = DeleteCityDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ListPersonsOverviewDocument = gql`
+    query ListPersonsOverview {
+  listPersons {
+    ...PersonCardFields
+  }
+}
+    ${PersonCardFieldsFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ListPersonsOverviewGQL extends Apollo.Query<ListPersonsOverviewQuery, ListPersonsOverviewQueryVariables> {
+    document = ListPersonsOverviewDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

@@ -5,6 +5,8 @@ import {
   DeletePersonGQL,
   FindPersonGQL,
   ListPersonsGQL,
+  ListPersonsOverviewGQL,
+  PersonCardFieldsFragment,
   PersonFieldsFragment,
   PersonInput,
   SavePersonGQL,
@@ -15,6 +17,7 @@ import {
 })
 export class PersonApiService {
   private readonly listPersonsGql = inject(ListPersonsGQL);
+  private readonly listPersonsOverviewGql = inject(ListPersonsOverviewGQL);
   private readonly findPersonGql = inject(FindPersonGQL);
   private readonly savePersonGql = inject(SavePersonGQL);
   private readonly deletePersonGql = inject(DeletePersonGQL);
@@ -63,6 +66,18 @@ export class PersonApiService {
         return wasDeleted;
       }),
     );
+  }
+
+  listPersonsOverview(): Observable<PersonCardFieldsFragment[]> {
+    return this.listPersonsOverviewGql
+      .fetch({ fetchPolicy: 'network-only' })
+      .pipe(map(({ data }) => (data?.listPersons ?? []) as PersonCardFieldsFragment[]));
+  }
+
+  watchPersonsOverview(): Observable<PersonCardFieldsFragment[]> {
+    return this.listPersonsOverviewGql
+      .watch({ fetchPolicy: 'cache-and-network' })
+      .valueChanges.pipe(map(({ data }) => (data?.listPersons ?? []) as PersonCardFieldsFragment[]));
   }
 }
 

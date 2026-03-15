@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { InMemoryCache } from '@apollo/client/core';
 import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { provideRouter } from '@angular/router';
@@ -10,6 +11,7 @@ import { routes } from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideAnimationsAsync(),
     provideHttpClient(),
     provideApollo(() => {
       const httpLink = inject(HttpLink);
@@ -24,3 +26,4 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes)
   ]
 };
+

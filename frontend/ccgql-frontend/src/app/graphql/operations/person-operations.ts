@@ -1,5 +1,14 @@
 import { gql } from 'apollo-angular';
 
+export const PERSON_CARD_FIELDS_FRAGMENT = gql`
+  fragment PersonCardFields on Person {
+	id
+	firstName
+	lastName
+	dateOfBirth
+  }
+`;
+
 export const PERSON_FIELDS_FRAGMENT = gql`
   fragment PersonFields on Person {
 	id
@@ -10,6 +19,16 @@ export const PERSON_FIELDS_FRAGMENT = gql`
 	occupation
 	dateOfBirth
   }
+`;
+
+export const LIST_PERSONS_OVERVIEW_QUERY = gql`
+  query ListPersonsOverview {
+	listPersons {
+	  ...PersonCardFields
+	}
+  }
+
+  ${PERSON_CARD_FIELDS_FRAGMENT}
 `;
 
 export const LIST_PERSONS_QUERY = gql`
@@ -47,4 +66,5 @@ export const DELETE_PERSON_MUTATION = gql`
 	deletePerson(id: $id)
   }
 `;
+
 

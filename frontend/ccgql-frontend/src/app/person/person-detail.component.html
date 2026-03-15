@@ -1,0 +1,210 @@
+<div class="page-container">
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    <a routerLink="/" class="back-link">
+      ← Zurück zur Übersicht
+    </a>
+  </nav>
+
+  <mat-card class="detail-card">
+    <mat-card-header>
+      <mat-card-title>
+        @if (isCreateMode()) {
+          Neue Person anlegen
+        } @else if (isEditMode()) {
+          Person bearbeiten
+        } @else {
+          Personendetails
+        }
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <div class="spinner-container" role="status" aria-label="Person wird geladen">
+          <mat-spinner diameter="48" />
+        </div>
+      }
+
+      @if (error()) {
+        <p class="error-message" role="alert">{{ error() }}</p>
+      }
+
+      @if (!loading()) {
+        <form [formGroup]="form" (ngSubmit)="save()" id="person-form" novalidate>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Vorname</mat-label>
+            <input
+              matInput
+              formControlName="firstName"
+              placeholder="Vorname eingeben"
+              autocomplete="given-name"
+              aria-required="true"
+            />
+            @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
+              <mat-error>Vorname ist erforderlich.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nachname</mat-label>
+            <input
+              matInput
+              formControlName="lastName"
+              placeholder="Nachname eingeben"
+              autocomplete="family-name"
+              aria-required="true"
+            />
+            @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
+              <mat-error>Nachname ist erforderlich.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>E-Mail</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="E-Mail-Adresse eingeben"
+              autocomplete="email"
+              aria-required="true"
+            />
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              @if (form.controls.email.hasError('required')) {
+                <mat-error>E-Mail ist erforderlich.</mat-error>
+              } @else {
+                <mat-error>Bitte eine gültige E-Mail-Adresse eingeben.</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Telefon</mat-label>
+            <input
+              matInput
+              type="tel"
+              formControlName="phone"
+              placeholder="Telefonnummer eingeben"
+              autocomplete="tel"
+              aria-required="true"
+            />
+            @if (form.controls.phone.invalid && form.controls.phone.touched) {
+              <mat-error>Telefon ist erforderlich.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Beruf/Tätigkeit</mat-label>
+            <mat-select formControlName="occupation" aria-required="true">
+              @for (opt of occupationOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.occupation.invalid && form.controls.occupation.touched) {
+              <mat-error>Beruf ist erforderlich.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Geburtsdatum</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="dateOfBirth"
+              placeholder="TT.MM.JJJJ"
+              aria-required="true"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="picker" aria-label="Kalender öffnen" />
+            <mat-datepicker #picker />
+            @if (form.controls.dateOfBirth.invalid && form.controls.dateOfBirth.touched) {
+              <mat-error>Geburtsdatum ist erforderlich.</mat-error>
+            }
+          </mat-form-field>
+        </form>
+      }
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      @if (isViewMode()) {
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="startEdit()"
+          aria-label="Person bearbeiten"
+        >
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          Bearbeiten
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="delete()"
+          [disabled]="deleting()"
+          aria-label="Person löschen"
+        >
+          <mat-icon aria-hidden="true">delete</mat-icon>
+          @if (deleting()) { Wird gelöscht… } @else { Löschen }
+        </button>
+      }
+
+      @if (isEditMode()) {
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          form="person-form"
+          [disabled]="saving()"
+          aria-label="Änderungen speichern"
+        >
+          <mat-icon aria-hidden="true">save</mat-icon>
+          @if (saving()) { Wird gespeichert… } @else { Speichern }
+        </button>
+        <button
+          mat-button
+          type="button"
+          (click)="cancelEdit()"
+          [disabled]="saving()"
+          aria-label="Bearbeitung abbrechen"
+        >
+          Abbrechen
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="delete()"
+          [disabled]="deleting() || saving()"
+          aria-label="Person löschen"
+        >
+          <mat-icon aria-hidden="true">delete</mat-icon>
+          @if (deleting()) { Wird gelöscht… } @else { Löschen }
+        </button>
+      }
+
+      @if (isCreateMode()) {
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          form="person-form"
+          [disabled]="saving()"
+          aria-label="Person speichern"
+        >
+          <mat-icon aria-hidden="true">save</mat-icon>
+          @if (saving()) { Wird gespeichert… } @else { Speichern }
+        </button>
+        <button
+          mat-button
+          type="button"
+          (click)="cancelCreate()"
+          [disabled]="saving()"
+          aria-label="Abbrechen und zur Übersicht"
+        >
+          Abbrechen
+        </button>
+      }
+    </mat-card-actions>
+  </mat-card>
+</div>

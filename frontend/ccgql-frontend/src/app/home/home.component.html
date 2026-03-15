@@ -1,0 +1,110 @@
+<section class="section" aria-labelledby="persons-heading">
+  <div class="section-header">
+    <h1 id="persons-heading" class="section-title">Personenübersicht</h1>
+    <a mat-raised-button color="primary" routerLink="/persons/new" aria-label="Neue Person hinzufügen">
+      <mat-icon aria-hidden="true">person_add</mat-icon>
+      Neue Person hinzufügen
+    </a>
+  </div>
+
+  @if (personsLoading()) {
+    <div class="spinner-container" role="status" aria-label="Personen werden geladen">
+      <mat-spinner diameter="48" />
+    </div>
+  }
+
+  @if (personsError()) {
+    <p class="error-message" role="alert">
+      Fehler beim Laden der Personen: {{ personsError() }}
+    </p>
+  }
+
+  @if (!personsLoading() && !personsError()) {
+    @if (persons().length === 0) {
+      <p class="empty-message">Keine Personen vorhanden.</p>
+    } @else {
+      <div class="card-grid" role="list">
+        @for (person of persons(); track person.id) {
+          <mat-card
+            class="item-card"
+            role="listitem"
+            (click)="navigateToPerson(person.id)"
+            (keydown.enter)="navigateToPerson(person.id)"
+            (keydown.space)="navigateToPerson(person.id)"
+            tabindex="0"
+            [attr.aria-label]="person.firstName + ' ' + person.lastName + ' aufrufen'"
+          >
+            <mat-card-header>
+              <mat-card-title>{{ person.firstName }} {{ person.lastName }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="card-detail">
+                <span class="detail-label">Geburtsdatum:</span>
+                {{ person.dateOfBirth | date: 'dd.MM.yyyy' }}
+              </p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary" (click)="navigateToPerson(person.id)" aria-label="Details anzeigen">
+                Details
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</section>
+
+<hr class="divider" aria-hidden="true" />
+
+<section class="section" aria-labelledby="cities-heading">
+  <div class="section-header">
+    <h2 id="cities-heading" class="section-title">Städteübersicht</h2>
+    <a mat-raised-button color="primary" routerLink="/cities/new" aria-label="Neue Stadt hinzufügen">
+      <mat-icon aria-hidden="true">add_location</mat-icon>
+      Neue Stadt hinzufügen
+    </a>
+  </div>
+
+  @if (citiesLoading()) {
+    <div class="spinner-container" role="status" aria-label="Städte werden geladen">
+      <mat-spinner diameter="48" />
+    </div>
+  }
+
+  @if (citiesError()) {
+    <p class="error-message" role="alert">
+      Fehler beim Laden der Städte: {{ citiesError() }}
+    </p>
+  }
+
+  @if (!citiesLoading() && !citiesError()) {
+    @if (cities().length === 0) {
+      <p class="empty-message">Keine Städte vorhanden.</p>
+    } @else {
+      <div class="card-grid" role="list">
+        @for (city of cities(); track city.id) {
+          <mat-card
+            class="item-card"
+            role="listitem"
+            (click)="navigateToCity(city.id)"
+            (keydown.enter)="navigateToCity(city.id)"
+            (keydown.space)="navigateToCity(city.id)"
+            tabindex="0"
+            [attr.aria-label]="city.name + ', ' + city.country + ' aufrufen'"
+          >
+            <mat-card-header>
+              <mat-card-title>{{ city.name }}</mat-card-title>
+              <mat-card-subtitle>{{ city.country }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions>
+              <button mat-button color="primary" (click)="navigateToCity(city.id)" aria-label="Details anzeigen">
+                Details
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</section>

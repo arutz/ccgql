@@ -2,11 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import {
+  CityCardFieldsFragment,
   CityFieldsFragment,
   CityInput,
   DeleteCityGQL,
   FindCityGQL,
   ListCitiesGQL,
+  ListCitiesOverviewGQL,
   SaveCityGQL,
 } from '../../generated/graphql';
 
@@ -15,6 +17,7 @@ import {
 })
 export class CityApiService {
   private readonly listCitiesGql = inject(ListCitiesGQL);
+  private readonly listCitiesOverviewGql = inject(ListCitiesOverviewGQL);
   private readonly findCityGql = inject(FindCityGQL);
   private readonly saveCityGql = inject(SaveCityGQL);
   private readonly deleteCityGql = inject(DeleteCityGQL);
@@ -63,6 +66,18 @@ export class CityApiService {
         return wasDeleted;
       }),
     );
+  }
+
+  listCitiesOverview(): Observable<CityCardFieldsFragment[]> {
+    return this.listCitiesOverviewGql
+      .fetch({ fetchPolicy: 'network-only' })
+      .pipe(map(({ data }) => (data?.listCities ?? []) as CityCardFieldsFragment[]));
+  }
+
+  watchCitiesOverview(): Observable<CityCardFieldsFragment[]> {
+    return this.listCitiesOverviewGql
+      .watch({ fetchPolicy: 'cache-and-network' })
+      .valueChanges.pipe(map(({ data }) => (data?.listCities ?? []) as CityCardFieldsFragment[]));
   }
 }
 
