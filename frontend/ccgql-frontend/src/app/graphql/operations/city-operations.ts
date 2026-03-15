@@ -2,25 +2,25 @@ import { gql } from 'apollo-angular';
 
 export const CITY_CARD_FIELDS_FRAGMENT = gql`
   fragment CityCardFields on City {
-    id
-    name
-    country
+	id
+	name
+	country
   }
 `;
 
 export const CITY_FIELDS_FRAGMENT = gql`
   fragment CityFields on City {
-    id
-    name
-    country
+	id
+	name
+	country
   }
 `;
 
 export const LIST_CITIES_OVERVIEW_QUERY = gql`
   query ListCitiesOverview {
-    listCities {
-      ...CityCardFields
-    }
+	listCities {
+	  ...CityCardFields
+	}
   }
 
   ${CITY_CARD_FIELDS_FRAGMENT}
@@ -28,9 +28,9 @@ export const LIST_CITIES_OVERVIEW_QUERY = gql`
 
 export const LIST_CITIES_QUERY = gql`
   query ListCities {
-    listCities {
-      ...CityFields
-    }
+	listCities {
+	  ...CityFields
+	}
   }
 
   ${CITY_FIELDS_FRAGMENT}
@@ -38,9 +38,9 @@ export const LIST_CITIES_QUERY = gql`
 
 export const FIND_CITY_QUERY = gql`
   query FindCity($id: Int!) {
-    findCity(id: $id) {
-      ...CityFields
-    }
+	findCity(id: $id) {
+	  ...CityFields
+	}
   }
 
   ${CITY_FIELDS_FRAGMENT}
@@ -48,9 +48,9 @@ export const FIND_CITY_QUERY = gql`
 
 export const SAVE_CITY_MUTATION = gql`
   mutation SaveCity($person: CityInput!) {
-    saveCity(person: $person) {
-      ...CityFields
-    }
+	saveCity(person: $person) {
+	  ...CityFields
+	}
   }
 
   ${CITY_FIELDS_FRAGMENT}
@@ -58,8 +58,9 @@ export const SAVE_CITY_MUTATION = gql`
 
 export const DELETE_CITY_MUTATION = gql`
   mutation DeleteCity($id: Int!) {
-    deleteCity(id: $id)
+	deleteCity(id: $id)
   }
 `;
+
 
 
