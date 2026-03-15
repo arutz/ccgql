@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.schema.gql.domain
+package org.slashdev.demo.ccgql.schema.gql.schema
 
 import com.expediagroup.graphql.generator.annotations.GraphQLName
 import org.slashdev.demo.ccgql.model.Address

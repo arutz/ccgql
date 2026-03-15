@@ -242,7 +242,8 @@ Backend --> Frontend
 
 <!--
 - Das Backend generiert automatisch ein Schema, graphql-codegen erzeugt daraus TypeScript Typen für das Angular Frontend.
-- Der Codecentric Ansatz eignet sich gut für Backend‑getriebene
+- Der Codecentric Ansatz eignet sich gut für Backend‑getriebene Schemas
+- GraphQL wiederum bietet Client-driven Datenstrukturen für die Schemas des Backends
 -->
 ------------------------------------------------------------------------
 
@@ -253,6 +254,7 @@ GraphQL bietet:
 - flexible Datenabfragen
 - effiziente APIs
 - stark typisierte Schnittstellen
+- Client getriebene Datenabfrage
 
 Codecentric GraphQL ermöglicht:
 
@@ -261,5 +263,5 @@ Codecentric GraphQL ermöglicht:
 - starke Typisierung zwischen Backend und Frontend
 
 <!--
-notes: Zusammenfassung der wichtigsten Punkte.
+Zusammenfassung der wichtigsten Punkte.
 -->

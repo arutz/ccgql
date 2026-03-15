@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.queries
+package org.slashdev.demo.ccgql.controller
 
 import com.expediagroup.graphql.server.operations.Mutation
 import com.expediagroup.graphql.server.operations.Query

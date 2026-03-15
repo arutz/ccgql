@@ -22,7 +22,8 @@
   `src/main/kotlin/module/Database.kt`).
 - Backend routing is GraphQL-first: `configureGraphQl()` installs the GraphQL server, and `configureRooting()` exposes
   GraphiQL, SDL, and POST routes from `src/main/kotlin/module/Rooting.kt`.
-- GraphQL operations are grouped by domain in `src/main/kotlin/queries/`, with each file containing both a `*Query` and
+- GraphQL operations are grouped by domain in `src/main/kotlin/controller/`, with each file containing both a `*Query`
+  and
   matching `*Mutation` class.
 
 ## Integration points and runtime dependencies
@@ -65,7 +66,7 @@
 - Keep backend persistence split by technical cut: table metadata in `schema/tables`, DAO mappings in `schema/entities`,
   transport/domain-shaped data classes in `model`, and persistence APIs in `repository`.
 - Keep GraphQL wiring split by concern: server install in `src/main/kotlin/module/GraphQL.kt`, route exposure in
-  `src/main/kotlin/module/Rooting.kt`, operations in `src/main/kotlin/queries/`, and custom scalar hooks in
+  `src/main/kotlin/module/Rooting.kt`, operations in `src/main/kotlin/controller/`, and custom scalar hooks in
   `src/main/kotlin/schema/gql/`.
 - Add new DB structures as Exposed `Table` classes under `src/main/kotlin/schema/tables/` and include them in
   bootstrapping logic.

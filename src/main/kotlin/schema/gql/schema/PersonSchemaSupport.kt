@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.schema.gql.domain
+package org.slashdev.demo.ccgql.schema.gql.schema
 
 import org.slashdev.demo.ccgql.model.Address
 import org.slashdev.demo.ccgql.repository.AddressRepository
