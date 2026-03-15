@@ -51,6 +51,8 @@ export class CityDetailComponent implements OnInit {
 
   private cityId: number | null = null;
 
+  private originalCity: CityFieldsFragment | null = null;
+
   readonly form = this.fb.nonNullable.group({
     name: ["", Validators.required],
     country: ["", Validators.required],
@@ -71,6 +73,7 @@ export class CityDetailComponent implements OnInit {
     this.cityApi.findCity(this.cityId).subscribe({
       next: (city) => {
         if (city) {
+          this.originalCity = city;
           this.patchForm(city);
         } else {
           this.error.set("Stadt nicht gefunden.");
@@ -91,6 +94,9 @@ export class CityDetailComponent implements OnInit {
   }
 
   cancelEdit(): void {
+    if (this.originalCity) {
+      this.patchForm(this.originalCity);
+    }
     this.mode.set("read");
     this.form.disable();
   }

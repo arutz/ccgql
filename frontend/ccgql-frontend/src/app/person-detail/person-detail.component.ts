@@ -53,6 +53,8 @@ export class PersonDetailComponent implements OnInit {
 
   private personId: number | null = null;
 
+  private originalPerson: PersonFieldsFragment | null = null;
+
   readonly occupationOptions: { value: Occupation; label: string }[] = [
     { value: Occupation.Artist, label: "Künstler/in" },
     { value: Occupation.Doctor, label: "Arzt/Ärztin" },
@@ -85,6 +87,7 @@ export class PersonDetailComponent implements OnInit {
     this.personApi.findPerson(this.personId).subscribe({
       next: (person) => {
         if (person) {
+          this.originalPerson = person;
           this.patchForm(person);
         } else {
           this.error.set("Person nicht gefunden.");
@@ -105,6 +108,9 @@ export class PersonDetailComponent implements OnInit {
   }
 
   cancelEdit(): void {
+    if (this.originalPerson) {
+      this.patchForm(this.originalPerson);
+    }
     this.mode.set("read");
     this.form.disable();
   }
