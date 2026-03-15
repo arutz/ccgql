@@ -5,8 +5,10 @@ import {
   DeletePersonGQL,
   FindPersonGQL,
   ListPersonsGQL,
+  ListPersonsSummaryGQL,
   PersonFieldsFragment,
   PersonInput,
+  PersonSummaryFragment,
   SavePersonGQL,
 } from "../../generated/graphql";
 
@@ -15,6 +17,7 @@ import {
 })
 export class PersonApiService {
   private readonly listPersonsGql = inject(ListPersonsGQL);
+  private readonly listPersonsSummaryGql = inject(ListPersonsSummaryGQL);
   private readonly findPersonGql = inject(FindPersonGQL);
   private readonly savePersonGql = inject(SavePersonGQL);
   private readonly deletePersonGql = inject(DeletePersonGQL);
@@ -23,6 +26,12 @@ export class PersonApiService {
     return this.listPersonsGql
       .fetch({ fetchPolicy: "network-only" })
       .pipe(map(({ data }) => (data?.listPersons ?? []) as PersonFieldsFragment[]));
+  }
+
+  listPersonsSummary(): Observable<PersonSummaryFragment[]> {
+    return this.listPersonsSummaryGql
+      .fetch({ fetchPolicy: "network-only" })
+      .pipe(map(({ data }) => (data?.listPersons ?? []) as PersonSummaryFragment[]));
   }
 
   watchPersons(): Observable<PersonFieldsFragment[]> {

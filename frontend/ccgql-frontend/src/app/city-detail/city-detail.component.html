@@ -1,0 +1,106 @@
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+
+  <button mat-button (click)="navigateBack()" class="mb-4">
+    <mat-icon>arrow_back</mat-icon>
+    Zurück zur Übersicht
+  </button>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        @switch (mode()) {
+          @case ("create") { Neue Stadt anlegen }
+          @case ("edit") { Stadt bearbeiten }
+          @case ("read") { Stadtdetails }
+        }
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="pt-4">
+
+      @if (loading()) {
+        <div class="flex justify-center py-8">
+          <mat-spinner diameter="48" aria-label="Stadt wird geladen" />
+        </div>
+      } @else {
+
+        @if (error()) {
+          <p class="text-red-600 mb-4" role="alert">{{ error() }}</p>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" autocomplete="address-level2" />
+              @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+                <mat-error>Name ist erforderlich.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Land</mat-label>
+              <input matInput formControlName="country" autocomplete="country-name" />
+              @if (form.controls.country.hasError('required') && form.controls.country.touched) {
+                <mat-error>Land ist erforderlich.</mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+
+          <div class="flex flex-wrap gap-3 mt-6">
+
+            @if (mode() === 'create' || mode() === 'edit') {
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="saving()"
+                aria-label="Datensatz speichern"
+              >
+                @if (saving()) {
+                  <mat-spinner diameter="20" class="inline-block mr-2" />
+                }
+                <mat-icon>save</mat-icon>
+                Speichern
+              </button>
+            }
+
+            @if (mode() === 'edit') {
+              <button mat-button type="button" (click)="cancelEdit()">
+                Abbrechen
+              </button>
+            }
+
+            @if (mode() === 'read') {
+              <button mat-raised-button color="primary" type="button" (click)="enableEdit()">
+                <mat-icon>edit</mat-icon>
+                Bearbeiten
+              </button>
+
+              <button
+                mat-raised-button
+                color="warn"
+                type="button"
+                (click)="delete()"
+                [disabled]="deleting()"
+                aria-label="Datensatz löschen"
+              >
+                @if (deleting()) {
+                  <mat-spinner diameter="20" class="inline-block mr-2" />
+                }
+                <mat-icon>delete</mat-icon>
+                Löschen
+              </button>
+            }
+
+          </div>
+
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+
+</div>
