@@ -63,6 +63,7 @@ class GraphQLRoutingTest {
             provide<AddressRepository> { addressRepository }
         }
 
+        configureCors()
         configureGraphQl()
         configureRooting()
     }
@@ -137,5 +138,38 @@ class GraphQLRoutingTest {
         )
         assertEquals(Date.from(Instant.parse("1906-12-09T00:00:00Z")), savedPerson.captured.dateOfBirth)
         verify(exactly = 1) { repository.save(any()) }
+    }
+
+    @Test
+    fun graphqlPreflightRequestReturnsCorsHeaders() = testGraphQlApplication {
+        application {
+            configureTestGraphQlApp()
+        }
+
+        val response = client.options("/graphql") {
+            header(HttpHeaders.Origin, "http://localhost:4200")
+            header(HttpHeaders.AccessControlRequestMethod, HttpMethod.Post.value)
+            header(HttpHeaders.AccessControlRequestHeaders, "content-type")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("http://localhost:4200", response.headers[HttpHeaders.AccessControlAllowOrigin])
+        assertTrue(response.headers[HttpHeaders.AccessControlAllowHeaders]?.contains("Content-Type") == true)
+    }
+
+    @Test
+    fun graphqlPostRouteIncludesCorsHeadersForAllowedOrigin() = testGraphQlApplication {
+        application {
+            configureTestGraphQlApp()
+        }
+
+        val response = client.post("/graphql") {
+            header(HttpHeaders.Origin, "http://localhost:4200")
+            contentType(ContentType.Application.Json)
+            setBody("""{"query":"query { listPersons { id } }"}""")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("http://localhost:4200", response.headers[HttpHeaders.AccessControlAllowOrigin])
     }
 }
