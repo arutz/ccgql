@@ -1,5 +1,13 @@
 import { gql } from "apollo-angular";
 
+export const CITY_SUMMARY_FRAGMENT = gql`
+  fragment CitySummary on City {
+    id
+    name
+    country
+  }
+`;
+
 export const CITY_FIELDS_FRAGMENT = gql`
   fragment CityFields on City {
     id

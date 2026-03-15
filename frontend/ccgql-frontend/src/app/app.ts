@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { RouterLink, RouterOutlet } from "@angular/router";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet],
-  template: `<router-outlet />`,
+  imports: [MatToolbarModule, RouterLink, RouterOutlet],
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {}

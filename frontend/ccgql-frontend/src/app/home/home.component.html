@@ -1,16 +1,16 @@
 <div class="container mx-auto px-4 py-8 max-w-6xl">
+  @if (loading()) {
+    <div class="flex justify-center py-8">
+      <mat-spinner diameter="48" aria-label="Übersicht wird geladen" />
+    </div>
+  } @else if (error()) {
+    <p class="text-red-600" role="alert">{{ error() }}</p>
+  } @else {
 
-  <!-- Persons Section -->
-  <section class="mb-12" aria-labelledby="persons-heading">
-    <h1 id="persons-heading" class="text-3xl font-bold mb-6">Personenübersicht</h1>
+    <!-- Persons Section -->
+    <section class="mb-12" aria-labelledby="persons-heading">
+      <h1 id="persons-heading" class="text-3xl font-bold mb-6">Personenübersicht</h1>
 
-    @if (personsLoading()) {
-      <div class="flex justify-center py-8">
-        <mat-spinner diameter="48" aria-label="Personen werden geladen" />
-      </div>
-    } @else if (personsError()) {
-      <p class="text-red-600" role="alert">Fehler beim Laden der Personen.</p>
-    } @else {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (person of persons(); track person.id) {
           <a
@@ -36,20 +36,12 @@
           Neue Person hinzufügen
         </a>
       </div>
-    }
-  </section>
+    </section>
 
-  <!-- Cities Section -->
-  <section aria-labelledby="cities-heading">
-    <h2 id="cities-heading" class="text-3xl font-bold mb-6">Städteübersicht</h2>
+    <!-- Cities Section -->
+    <section aria-labelledby="cities-heading">
+      <h2 id="cities-heading" class="text-3xl font-bold mb-6">Städteübersicht</h2>
 
-    @if (citiesLoading()) {
-      <div class="flex justify-center py-8">
-        <mat-spinner diameter="48" aria-label="Städte werden geladen" />
-      </div>
-    } @else if (citiesError()) {
-      <p class="text-red-600" role="alert">Fehler beim Laden der Städte.</p>
-    } @else {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (city of cities(); track city.id) {
           <a
@@ -73,7 +65,7 @@
           Neue Stadt hinzufügen
         </a>
       </div>
-    }
-  </section>
+    </section>
+  }
 
 </div>

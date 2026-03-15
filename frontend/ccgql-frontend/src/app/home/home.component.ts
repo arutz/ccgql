@@ -6,9 +6,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
-import { CityApiService } from "../graphql/city-api.service";
-import { PersonApiService } from "../graphql/person-api.service";
-import { CityFieldsFragment, PersonSummaryFragment } from "../../generated/graphql";
+import { HomeApiService } from "../graphql/home-api.service";
+import { CitySummaryFragment, PersonSummaryFragment } from "../../generated/graphql";
 
 @Component({
   selector: "app-home",
@@ -17,36 +16,23 @@ import { CityFieldsFragment, PersonSummaryFragment } from "../../generated/graph
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  private readonly personApi = inject(PersonApiService);
-  private readonly cityApi = inject(CityApiService);
+  private readonly homeApi = inject(HomeApiService);
 
   readonly persons = signal<PersonSummaryFragment[]>([]);
-  readonly cities = signal<CityFieldsFragment[]>([]);
-  readonly personsLoading = signal(true);
-  readonly citiesLoading = signal(true);
-  readonly personsError = signal(false);
-  readonly citiesError = signal(false);
+  readonly cities = signal<CitySummaryFragment[]>([]);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.personApi.listPersonsSummary().subscribe({
-      next: (persons) => {
+    this.homeApi.listHomeSummaries().subscribe({
+      next: ({ persons, cities }) => {
         this.persons.set(persons);
-        this.personsLoading.set(false);
-      },
-      error: () => {
-        this.personsError.set(true);
-        this.personsLoading.set(false);
-      },
-    });
-
-    this.cityApi.listCities().subscribe({
-      next: (cities) => {
         this.cities.set(cities);
-        this.citiesLoading.set(false);
+        this.loading.set(false);
       },
       error: () => {
-        this.citiesError.set(true);
-        this.citiesLoading.set(false);
+        this.error.set("Fehler beim Laden der Übersicht.");
+        this.loading.set(false);
       },
     });
   }

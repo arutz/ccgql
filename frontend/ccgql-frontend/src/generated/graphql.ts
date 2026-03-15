@@ -174,6 +174,8 @@ export type DeleteAddressMutationVariables = Exact<{
 
 export type DeleteAddressMutation = { __typename?: 'Mutation', deleteAddress: boolean };
 
+export type CitySummaryFragment = { __typename?: 'City', id?: number | null, name: string, country: string };
+
 export type CityFieldsFragment = { __typename?: 'City', id?: number | null, name: string, country: string };
 
 export type ListCitiesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -201,6 +203,11 @@ export type DeleteCityMutationVariables = Exact<{
 
 
 export type DeleteCityMutation = { __typename?: 'Mutation', deleteCity: boolean };
+
+export type ListHomeSummariesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListHomeSummariesQuery = { __typename?: 'Query', listPersons: Array<{ __typename?: 'Person', id?: number | null, firstName: string, lastName: string, dateOfBirth: string }>, listCities: Array<{ __typename?: 'City', id?: number | null, name: string, country: string }> };
 
 export type PersonSummaryFragment = { __typename?: 'Person', id?: number | null, firstName: string, lastName: string, dateOfBirth: string };
 
@@ -252,6 +259,13 @@ export const AddressFieldsFragmentDoc = gql`
   cityId
   state
   zipCode
+}
+    `;
+export const CitySummaryFragmentDoc = gql`
+    fragment CitySummary on City {
+  id
+  name
+  country
 }
     `;
 export const CityFieldsFragmentDoc = gql`
@@ -415,6 +429,28 @@ export const DeleteCityDocument = gql`
   })
   export class DeleteCityGQL extends Apollo.Mutation<DeleteCityMutation, DeleteCityMutationVariables> {
     document = DeleteCityDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ListHomeSummariesDocument = gql`
+    query ListHomeSummaries {
+  listPersons {
+    ...PersonSummary
+  }
+  listCities {
+    ...CitySummary
+  }
+}
+    ${PersonSummaryFragmentDoc}
+${CitySummaryFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ListHomeSummariesGQL extends Apollo.Query<ListHomeSummariesQuery, ListHomeSummariesQueryVariables> {
+    document = ListHomeSummariesDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
