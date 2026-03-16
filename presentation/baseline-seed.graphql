@@ -57,7 +57,7 @@ mutation SeedCities {
 
 mutation SeedPersons {
   ada: savePerson(
-    person: {
+    personBase: {
       firstName: "Ada"
       lastName: "Lovelace"
       email: "ada.lovelace@example.com"
@@ -69,7 +69,7 @@ mutation SeedPersons {
     ...PersonFields
   }
   marie: savePerson(
-    person: {
+    personBase: {
       firstName: "Marie"
       lastName: "Curie"
       email: "marie.curie@example.com"
@@ -81,7 +81,7 @@ mutation SeedPersons {
     ...PersonFields
   }
   grace: savePerson(
-    person: {
+    personBase: {
       firstName: "Grace"
       lastName: "Hopper"
       email: "grace.hopper@example.com"
@@ -93,7 +93,7 @@ mutation SeedPersons {
     ...PersonFields
   }
   pablo: savePerson(
-    person: {
+    personBase: {
       firstName: "Pablo"
       lastName: "Picasso"
       email: "pablo.picasso@example.com"

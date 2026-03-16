@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.model
+package org.slashdev.demo.ccgql.model.common
 
 enum class Occupation {
     ENGINEER,

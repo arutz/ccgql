@@ -1,7 +1,7 @@
-package org.slashdev.demo.ccgql.schema.tables
+package org.slashdev.demo.ccgql.model.tables
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.slashdev.demo.ccgql.model.Occupation
+import org.slashdev.demo.ccgql.model.common.Occupation
 
 object PersonTable : IntIdTable("person") {
     val firstName = varchar("first_name", 255)

@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.model
+package org.slashdev.demo.ccgql.model.common
 
 data class Address(
     val id: Int? = null,

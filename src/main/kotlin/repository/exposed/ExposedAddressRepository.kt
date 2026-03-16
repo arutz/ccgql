@@ -2,12 +2,12 @@ package org.slashdev.demo.ccgql.repository.exposed
 
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.sql.Database
-import org.slashdev.demo.ccgql.model.Address
+import org.slashdev.demo.ccgql.model.common.Address
 import org.slashdev.demo.ccgql.repository.AddressRepository
-import org.slashdev.demo.ccgql.schema.entities.AddressEntity
-import org.slashdev.demo.ccgql.schema.entities.CityEntity
-import org.slashdev.demo.ccgql.schema.entities.PersonEntity
-import org.slashdev.demo.ccgql.schema.tables.AddressTable
+import org.slashdev.demo.ccgql.model.entities.AddressEntity
+import org.slashdev.demo.ccgql.model.entities.CityEntity
+import org.slashdev.demo.ccgql.model.entities.PersonEntity
+import org.slashdev.demo.ccgql.model.tables.AddressTable
 
 class ExposedAddressRepository(
     database: Database,

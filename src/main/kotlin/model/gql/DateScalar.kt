@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.schema.gql
+package org.slashdev.demo.ccgql.model.gql
 
 import graphql.GraphQLContext
 import graphql.execution.CoercedVariables

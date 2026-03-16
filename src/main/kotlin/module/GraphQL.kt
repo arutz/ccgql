@@ -9,8 +9,8 @@ import org.slashdev.demo.ccgql.controller.*
 import org.slashdev.demo.ccgql.repository.AddressRepository
 import org.slashdev.demo.ccgql.repository.CityRepository
 import org.slashdev.demo.ccgql.repository.PersonRepository
-import org.slashdev.demo.ccgql.schema.gql.CustomSchemaGeneratorHooks
-import org.slashdev.demo.ccgql.schema.gql.schema.PersonSchemaSupport
+import org.slashdev.demo.ccgql.model.gql.CustomSchemaGeneratorHooks
+import org.slashdev.demo.ccgql.model.gql.schema.PersonSchemaSupport
 
 fun Application.configureGraphQl() {
 
@@ -21,7 +21,7 @@ fun Application.configureGraphQl() {
 
     install(GraphQL) {
         schema {
-            packages = listOf("org.slashdev.demo.ccgql.model", "org.slashdev.demo.ccgql.schema.gql.schema")
+            packages = listOf("org.slashdev.demo.ccgql.model.common", "org.slashdev.demo.ccgql.model.gql.schema")
             queries = listOf(
                 PersonQuery(personRepository, personSchemaSupport),
                 CityQuery(cityRepository),

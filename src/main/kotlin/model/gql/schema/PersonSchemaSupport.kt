@@ -1,6 +1,6 @@
-package org.slashdev.demo.ccgql.schema.gql.schema
+package org.slashdev.demo.ccgql.model.gql.schema
 
-import org.slashdev.demo.ccgql.model.Address
+import org.slashdev.demo.ccgql.model.common.Address
 import org.slashdev.demo.ccgql.repository.AddressRepository
 
 class PersonSchemaSupport(

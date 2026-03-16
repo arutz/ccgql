@@ -2,7 +2,7 @@ package org.slashdev.demo.ccgql.controller
 
 import com.expediagroup.graphql.server.operations.Mutation
 import com.expediagroup.graphql.server.operations.Query
-import org.slashdev.demo.ccgql.model.Address
+import org.slashdev.demo.ccgql.model.common.Address
 import org.slashdev.demo.ccgql.repository.AddressRepository
 
 @Suppress("unused") // endpoint for gql

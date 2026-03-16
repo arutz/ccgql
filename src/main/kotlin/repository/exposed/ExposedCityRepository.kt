@@ -2,9 +2,9 @@ package org.slashdev.demo.ccgql.repository.exposed
 
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.sql.Database
-import org.slashdev.demo.ccgql.model.City
+import org.slashdev.demo.ccgql.model.common.City
 import org.slashdev.demo.ccgql.repository.CityRepository
-import org.slashdev.demo.ccgql.schema.entities.CityEntity
+import org.slashdev.demo.ccgql.model.entities.CityEntity
 
 class ExposedCityRepository(
     database: Database,
