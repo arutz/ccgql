@@ -1,3 +1,25 @@
+# Frontend AGENTS.md
+
+## Context
+
+Angular frontend for the **"Code-centric GraphQL"** demo.
+It consumes the Ktor backend GraphQL API at `http://localhost:8080/graphql` via Apollo Angular.
+
+**`src/generated/graphql.ts` must never be edited manually** – it is produced by
+`graphql-codegen` from `schema/schema.graphql` and the operation documents in
+`src/app/graphql/operations/`.
+
+## Development cycle
+
+1. If the backend schema changed: update `schema/schema.graphql`
+   (see root `AGENTS.md` → *Schema → Frontend sync*).
+2. Add or update GQL operation documents in `src/app/graphql/operations/*.ts`.
+3. Run `npm run codegen` to regenerate `src/generated/graphql.ts`.
+4. Expose generated services to the rest of the app through
+   `src/app/graphql/*-api.service.ts` wrappers.
+
+---
+
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
 ## TypeScript Best Practices

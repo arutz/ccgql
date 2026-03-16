@@ -1,45 +1,150 @@
-# ccgql
+# ccgql – Code-centric GraphQL Demo
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+Demo-Repository zur Präsentation **"Codecentric GraphQL"** – zeigt, wie ein
+GraphQL-Schema direkt aus dem Kotlin-Code generiert wird und Clients (hier: ein
+Angular-Frontend) daraus typisierte Clients erzeugen können.
 
-Here are some useful links to get you started:
+---
 
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
-
-## Features
-
-Here's a list of features included in this project:
-
-| Name                                                                   | Description                                                                        |
-| ------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| [Dependency Injection](https://start.ktor.io/p/ktor-di)                | Enables dependency injection for your server                                       |
-| [Content Negotiation](https://start.ktor.io/p/content-negotiation)     | Provides automatic content conversion according to Content-Type and Accept headers |
-| [Routing](https://start.ktor.io/p/routing)                             | Provides a structured routing DSL                                                  |
-| [Jackson](https://start.ktor.io/p/ktor-jackson)                        | Handles JSON serialization using Jackson library                                   |
-| [kotlinx.serialization](https://start.ktor.io/p/kotlinx-serialization) | Handles JSON serialization using kotlinx.serialization library                     |
-| [Postgres](https://start.ktor.io/p/postgres)                           | Adds Postgres database to your application                                         |
-| [Exposed](https://start.ktor.io/p/exposed)                             | Adds Exposed database to your application                                          |
-
-## Building & Running
-
-To build or run the project, use one of the following tasks:
-
-| Task                                    | Description                                                          |
-| -----------------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`                        | Run the tests                                                        |
-| `./gradlew build`                       | Build everything                                                     |
-| `./gradlew buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `./gradlew buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `./gradlew publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `./gradlew run`                         | Run the server                                                       |
-| `./gradlew runDocker`                   | Run using the local docker image                                     |
-
-If the server starts successfully, you'll see the following output:
+## Big Picture Architektur
 
 ```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+┌──────────────────────────────────────────────────────────────────┐
+│                          Backend (Ktor)                          │
+│                                                                  │
+│  Kotlin Code  ──►  GraphQL-Kotlin-Framework  ──►  GraphQL Schema │
+│                                                    │             │
+│                                               GraphQL API        │
+│                                             (POST /graphql)      │
+└──────────────────────────────────┬───────────────────────────────┘
+                                   │ Schema (SDL)
+                                   ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                       Frontend (Angular)                         │
+│                                                                  │
+│  Schema  ──►  graphql-codegen  ──►  TypeScript-Typen             │
+│                                       │                          │
+│                                  GQL Operations                  │
+│                                       │                          │
+│                               Apollo Angular Services            │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
+Der **Codecentric-Ansatz**:
+- Das Backend ist die *Single Source of Truth* – das Schema entsteht automatisch
+  aus Kotlin-Klassen und -Funktionen (keine manuelle SDL-Pflege).
+- Das Frontend generiert via `graphql-codegen` typisierte Angular-Services aus
+  dem Schema – Ende-zu-Ende-Typsicherheit ohne Handarbeit.
+
+---
+
+## Tech-Stack Backend
+
+| Bereich | Technologie |
+|---|---|
+| Sprache | Kotlin |
+| Server-Plattform | [Ktor](https://ktor.io/) |
+| GraphQL Codegen / API | [GraphQL Kotlin (Expedia)](https://opensource.expediagroup.com/graphql-kotlin/docs/) |
+| Persistenz ORM | [Exposed](https://github.com/JetBrains/Exposed) |
+| Datenbank | PostgreSQL 16 |
+| Dependency Injection | Ktor DI |
+
+---
+
+## Projekt-Struktur
+
+```
+src/main/kotlin/
+├── Application.kt              # Einstiegspunkt & Modulreihenfolge
+├── module/
+│   ├── Postgres.kt             # DB-Verbindung & DI-Registrierung
+│   ├── Database.kt             # Exposed-Schema-Bootstrap (auto-create)
+│   ├── Repositories.kt         # Repository-DI-Registrierung
+│   ├── GraphQL.kt              # GraphQL-Server-Installation
+│   ├── Rooting.kt              # HTTP-Routen (GraphiQL, SDL, POST)
+│   └── Cors.kt                 # CORS-Konfiguration
+├── controller/
+│   ├── PersonController.kt     # PersonQuery + PersonMutation
+│   ├── CityController.kt       # CityQuery + CityMutation
+│   └── AddressController.kt    # AddressQuery + AddressMutation
+├── model/
+│   ├── common/                 # Domänen-Datenklassen (transport-shaped)
+│   └── gql/                    # Custom Scalars & Schema-Hooks
+├── repository/
+│   ├── *Repository.kt          # Repository-Interfaces
+│   └── exposed/                # Exposed DAO-Implementierungen
+└── schema/
+    ├── tables/                 # Exposed Table-Definitionen (snake_case)
+    └── entities/               # Exposed DAO-Entities
+```
+
+### Startup-Reihenfolge (`Application.module`)
+
+```
+configurePostgres()
+  └─► configureDatabase()       # Tabellen auto-create via Exposed
+        └─► configureRepositories()
+              └─► configureGraphQl()
+                    └─► configureRooting()
+```
+
+---
+
+## Endpunkte
+
+| URL | Beschreibung |
+|---|---|
+| `POST http://localhost:8080/graphql` | GraphQL API |
+| `GET  http://localhost:8080/graphiql` | GraphiQL Playground |
+| `GET  http://localhost:8080/sdl` | GraphQL Schema (SDL) |
+
+---
+
+## Voraussetzungen
+
+- JDK 17+
+- Docker (für lokale PostgreSQL-Instanz)
+
+### PostgreSQL starten
+
+```bash
+docker compose -f infrastructure/docker-compose.yml up -d
+```
+
+Die Datenbank ist unter `jdbc:postgresql://localhost:5432/ccgql` erreichbar
+(User/Passwort: `postgres/postgres`).
+
+---
+
+## Build & Run
+
+| Befehl | Beschreibung |
+|---|---|
+| `./gradlew run` | Server starten (Port 8080) |
+| `./gradlew test` | Tests ausführen |
+| `./gradlew build` | Projekt bauen |
+| `./gradlew buildFatJar` | Ausführbares Fat-JAR erzeugen |
+| `./gradlew buildImage` | Docker-Image bauen |
+| `./gradlew runDocker` | Via lokalem Docker-Image starten |
+
+---
+
+## Schema-Synchronisation mit dem Frontend
+
+Nach Änderungen am Backend-Schema das SDL ins Frontend übertragen:
+
+```bash
+# Backend läuft auf :8080
+curl http://localhost:8080/sdl > frontend/ccgql-frontend/schema/schema.graphql
+```
+
+Anschließend im Frontend `npm run codegen` ausführen, um TypeScript-Typen neu
+zu generieren.
+
+---
+
+## Frontend
+
+Das Angular-Frontend liegt unter [`frontend/ccgql-frontend/`](./frontend/ccgql-frontend/).
+Dort befindet sich eine eigene [`README.md`](./frontend/ccgql-frontend/README.md) mit
+allen Frontend-spezifischen Informationen.

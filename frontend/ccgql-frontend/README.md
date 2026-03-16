@@ -1,59 +1,121 @@
-# CcgqlFrontend
+# ccgql – Frontend (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Angular-Frontend des Demo-Projekts **"Codecentric GraphQL"**.  
+Es konsumiert die Backend-GraphQL-API und zeigt den vollständigen
+Code-centric Ansatz: Schema → Codegen → typisierte Angular-Services.
 
-## Development server
+Zum Gesamtprojekt: [`../../README.md`](../../README.md)
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## Big Picture (Frontend-Sicht)
+
+```
+Backend SDL (http://localhost:8080/sdl)
+        │
+        ▼
+schema/schema.graphql        ◄── manuell per curl aktualisieren
+        │
+        ▼
+graphql-codegen
+        │
+        ▼
+src/generated/graphql.ts     ◄── generierte Typen & Apollo-Services
+        │
+        ├─► src/app/graphql/*-api.service.ts   ◄── App-facing Wrapper
+        │
+        └─► src/app/**/*.ts                    ◄── Angular Components
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Tech-Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Bereich | Technologie |
+|---|---|
+| Sprache / Framework | TypeScript / [Angular](https://angular.dev) |
+| GraphQL Client | [Apollo Angular](https://www.apollographql.com/docs/angular/) |
+| Codegen | [graphql-codegen](https://the-guild.dev/graphql/codegen) |
+| State Management | Angular Signals |
+| Change Detection | `OnPush` |
 
-```bash
-ng generate component component-name
+---
+
+## Projekt-Struktur
+
+```
+src/
+├── app/
+│   ├── app.ts / app.config.ts / app.routes.ts   # App-Einstieg & Apollo-Konfiguration
+│   ├── graphql/
+│   │   ├── operations/          # GQL-Dokumente (Queries & Mutations)
+│   │   │   ├── person-operations.ts
+│   │   │   ├── city-operations.ts
+│   │   │   ├── address-operations.ts
+│   │   │   └── home-operations.ts
+│   │   ├── person-api.service.ts   # App-facing Wrapper-Services
+│   │   ├── city-api.service.ts
+│   │   ├── address-api.service.ts
+│   │   └── home-api.service.ts
+│   ├── home/                    # Home-Feature (Übersichtsseite)
+│   ├── person-detail/           # Person-Detail-Feature (CRUD)
+│   └── city-detail/             # City-Detail-Feature (CRUD)
+├── generated/
+│   └── graphql.ts               # ⚡ Generiert – nicht manuell bearbeiten!
+└── styles.css
+schema/
+└── schema.graphql               # Vom Backend übernommenes SDL
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
+
+## Entwicklung
+
+### Voraussetzungen
+
+- Node.js 20+
+- Laufendes Backend auf `http://localhost:8080`
+
+### Installation & Start
 
 ```bash
-ng generate --help
+npm install
+npm start          # Dev-Server auf http://localhost:4200
 ```
 
-## Building
-
-To build the project run:
+### Tests
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Produktions-Build
 
 ```bash
-ng test
+npm run build      # Artefakte in dist/
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## Schema & Codegen-Workflow
+
+Wenn sich das Backend-Schema ändert, muss die lokale Schema-Datei
+aktualisiert und der Codegen erneut ausgeführt werden:
 
 ```bash
-ng e2e
+# 1. Schema vom laufenden Backend holen
+curl http://localhost:8080/sdl > schema/schema.graphql
+
+# 2. TypeScript-Typen und Apollo-Services neu generieren
+npm run codegen
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Die generierten Typen landen in `src/generated/graphql.ts` und werden
+von den `*-api.service.ts`-Wrappern verwendet.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Apollo Client Konfiguration
+
+Der Apollo Client ist in `src/app/app.config.ts` konfiguriert und zeigt
+auf `http://localhost:8080/graphql`.
