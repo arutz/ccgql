@@ -3,13 +3,13 @@ package org.slashdev.demo.ccgql.repository.exposed
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.slashdev.demo.ccgql.model.Address
-import org.slashdev.demo.ccgql.model.City
-import org.slashdev.demo.ccgql.model.Occupation
-import org.slashdev.demo.ccgql.model.PersonBase
-import org.slashdev.demo.ccgql.schema.tables.AddressTable
-import org.slashdev.demo.ccgql.schema.tables.CityTable
-import org.slashdev.demo.ccgql.schema.tables.PersonTable
+import org.slashdev.demo.ccgql.model.common.Address
+import org.slashdev.demo.ccgql.model.common.City
+import org.slashdev.demo.ccgql.model.common.Occupation
+import org.slashdev.demo.ccgql.model.common.PersonBase
+import org.slashdev.demo.ccgql.model.tables.AddressTable
+import org.slashdev.demo.ccgql.model.tables.CityTable
+import org.slashdev.demo.ccgql.model.tables.PersonTable
 import java.util.*
 import kotlin.test.*
 

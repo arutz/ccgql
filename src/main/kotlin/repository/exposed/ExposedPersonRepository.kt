@@ -2,9 +2,9 @@ package org.slashdev.demo.ccgql.repository.exposed
 
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.sql.Database
-import org.slashdev.demo.ccgql.model.PersonBase
+import org.slashdev.demo.ccgql.model.common.PersonBase
 import org.slashdev.demo.ccgql.repository.PersonRepository
-import org.slashdev.demo.ccgql.schema.entities.PersonEntity
+import org.slashdev.demo.ccgql.model.entities.PersonEntity
 
 class ExposedPersonRepository(
     database: Database,

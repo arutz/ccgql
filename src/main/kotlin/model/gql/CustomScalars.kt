@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.schema.gql
+package org.slashdev.demo.ccgql.model.gql
 
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
 import java.util.*

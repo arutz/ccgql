@@ -5,9 +5,9 @@ import io.ktor.server.plugins.di.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.slashdev.demo.ccgql.schema.tables.AddressTable
-import org.slashdev.demo.ccgql.schema.tables.CityTable
-import org.slashdev.demo.ccgql.schema.tables.PersonTable
+import org.slashdev.demo.ccgql.model.tables.AddressTable
+import org.slashdev.demo.ccgql.model.tables.CityTable
+import org.slashdev.demo.ccgql.model.tables.PersonTable
 
 fun Application.configureDatabase() {
     val database: Database by dependencies

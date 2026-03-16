@@ -1,9 +1,9 @@
-package org.slashdev.demo.ccgql.schema.gql.schema
+package org.slashdev.demo.ccgql.model.gql.schema
 
 import com.expediagroup.graphql.generator.annotations.GraphQLName
-import org.slashdev.demo.ccgql.model.Address
-import org.slashdev.demo.ccgql.model.Occupation
-import org.slashdev.demo.ccgql.model.PersonBase
+import org.slashdev.demo.ccgql.model.common.Address
+import org.slashdev.demo.ccgql.model.common.Occupation
+import org.slashdev.demo.ccgql.model.common.PersonBase
 import java.util.*
 
 @GraphQLName("Person")

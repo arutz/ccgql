@@ -1,4 +1,4 @@
-package org.slashdev.demo.ccgql.schema.tables
+package org.slashdev.demo.ccgql.model.tables
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 

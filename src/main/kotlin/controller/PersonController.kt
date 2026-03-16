@@ -2,11 +2,11 @@ package org.slashdev.demo.ccgql.controller
 
 import com.expediagroup.graphql.server.operations.Mutation
 import com.expediagroup.graphql.server.operations.Query
-import org.slashdev.demo.ccgql.model.PersonBase
+import org.slashdev.demo.ccgql.model.common.PersonBase
 import org.slashdev.demo.ccgql.repository.PersonRepository
-import org.slashdev.demo.ccgql.schema.gql.schema.PersonSchema
-import org.slashdev.demo.ccgql.schema.gql.schema.PersonSchemaSupport
-import org.slashdev.demo.ccgql.schema.gql.schema.toSchema
+import org.slashdev.demo.ccgql.model.gql.schema.PersonSchema
+import org.slashdev.demo.ccgql.model.gql.schema.PersonSchemaSupport
+import org.slashdev.demo.ccgql.model.gql.schema.toSchema
 
 @Suppress("unused") // endpoint for gql
 class PersonQuery(

@@ -20,6 +20,7 @@ GraphQL Architektur und der Codecentric Ansatz
 Begrüßung und kurze Einführung. Ich erkläre zunächst GraphQL und
 die wichtigsten Konzepte, vergleiche es anschließend mit REST und zeige
 danach den Codecentric Ansatz mit Kotlin sowie eine Beispielarchitektur.
+Abschließend gibt es eine Live-Demo in einer Beispiel-Anwendung.
 -->
 ------------------------------------------------------------------------
 
@@ -47,37 +48,36 @@ wichtigste Unterschied zu REST ist, dass der Client bestimmt, welche
 Daten zurückgegeben werden.
 -->
 ------------------------------------------------------------------------
-
+layout: two-columns
+---
 # Grundbegriffe in GraphQL
 
-### Query -- Daten lesen
+::left
+- Query Type: Einstiegspunkt zum Lesen von Daten
+- Mutation Type: Einstiegspunkt zum Schreiben von Daten
+- Object Type: Strukturierter Typ mit mehreren Feldern
+- Scalar Type: Einfacher Basisdatentyp für Einzelwerte
+- Enum Type: Feste Liste erlaubter Werte
+- Interface Type: Gemeinsame Felder für mehrere Typen
+- Union Type: Feld kann mehrere Typen zurückgeben
+- Input Type: Strukturierter Typ für Eingabeparameter
+- List Type: Feld enthält Liste gleicher Typen
+- Non-Null Type: Feld darf niemals null sein
 
+::right
 ```graphql
-query {
-    user(id: "1") {
-        name
-        email
+query GetBook {
+  allBooks {
+    title
+    category
+    author {
+      name
     }
-}
-```
-
-### Mutation -- Daten verändern
-
-```graphql
-mutation {
-    createUser(name: "Max") {
-        id
+    reviews {
+      rating
+      comment
     }
-}
-```
-
-### Fragment -- Wiederverwendbare Queryteile / Fragmente
-
-```graphql
-fragment UserData on User {
-    id
-    name
-    email
+  }
 }
 ```
 
@@ -112,7 +112,7 @@ Probleme:
 
 <!--
 notes: REST APIs bestehen oft aus vielen Endpoints. Clients müssen
-mehrere Requests kombinieren.
+mehrere Requests kombinieren und oft sequentiell orchestrieren.
 -->
 ------------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ Vorteile:
 - Aggregation mehrerer Services über eine Query / Mutation
 
 <!--
-notes: GraphQL aggregiert Daten aus verschiedenen Services und liefert
+GraphQL aggregiert Daten aus verschiedenen Services und liefert
 sie über eine einzige Query.
 -->
 ------------------------------------------------------------------------
@@ -151,6 +151,8 @@ flowchart LR
 KotlinCode --> GraphQLFramework
 GraphQLFramework --> GraphQLSchema
 GraphQLFramework --> GraphQLAPI
+Client --> GraphQLAPI
+Client --> GraphQLSchema
 ```
 
 Vorteile:
