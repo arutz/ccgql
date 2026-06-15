@@ -5,31 +5,34 @@ import com.expediagroup.graphql.server.ktor.defaultGraphQLStatusPages
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.plugins.statuspages.*
-import org.slashdev.demo.ccgql.controller.*
-import org.slashdev.demo.ccgql.repository.AddressRepository
-import org.slashdev.demo.ccgql.repository.CityRepository
-import org.slashdev.demo.ccgql.repository.PersonRepository
+import org.slashdev.demo.ccgql.controller.AddressMutation
+import org.slashdev.demo.ccgql.controller.AddressQuery
+import org.slashdev.demo.ccgql.controller.CityMutation
+import org.slashdev.demo.ccgql.controller.CityQuery
+import org.slashdev.demo.ccgql.controller.PersonMutation
+import org.slashdev.demo.ccgql.controller.PersonQuery
 import org.slashdev.demo.ccgql.model.gql.CustomSchemaGeneratorHooks
-import org.slashdev.demo.ccgql.model.gql.schema.PersonSchemaSupport
 
 fun Application.configureGraphQl() {
-
-    val personRepository: PersonRepository by dependencies
-    val cityRepository: CityRepository by dependencies
-    val addressRepository: AddressRepository by dependencies
-    val personSchemaSupport: PersonSchemaSupport by dependencies
+    val personQuery: PersonQuery by dependencies
+    val cityQuery: CityQuery by dependencies
+    val addressQuery: AddressQuery by dependencies
+    val personMutation: PersonMutation by dependencies
+    val cityMutation: CityMutation by dependencies
+    val addressMutation: AddressMutation by dependencies
 
     install(GraphQL) {
         schema {
             packages = listOf("org.slashdev.demo.ccgql.model.common", "org.slashdev.demo.ccgql.model.gql.schema")
             queries = listOf(
-                PersonQuery(personRepository, personSchemaSupport),
-                CityQuery(cityRepository),
-                AddressQuery(addressRepository)
+                personQuery,
+                cityQuery,
+                addressQuery
             )
             mutations = listOf(
-                PersonMutation(personRepository, personSchemaSupport), CityMutation(cityRepository),
-                AddressMutation(addressRepository)
+                personMutation,
+                cityMutation,
+                addressMutation
             )
             subscriptions = listOf() // erst mal nicht relevant
             hooks = CustomSchemaGeneratorHooks

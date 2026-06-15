@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.slashdev.demo.ccgql.controller.*
 import org.slashdev.demo.ccgql.model.common.Address
 import org.slashdev.demo.ccgql.model.common.Occupation
 import org.slashdev.demo.ccgql.model.common.PersonBase
@@ -93,6 +94,41 @@ class GraphQLRoutingTest {
         }
 
         block()
+    }
+
+    @Test
+    fun graphqlConfigurationUsesControllerBindings() = testGraphQlApplication {
+        val personRepository = createPersonRepositoryMock()
+        val cityRepository = mockk<CityRepository>(relaxed = true)
+        val addressRepository = mockk<AddressRepository> {
+            every { findByPersonId(existingPersonBase.id!!) } returns listOf(existingAddress)
+            every { findByPersonId(match { it != existingPersonBase.id }) } returns emptyList()
+        }
+        val personSchemaSupport = PersonSchemaSupport(addressRepository)
+
+        application {
+            dependencies {
+                provide<PersonQuery> { PersonQuery(personRepository, personSchemaSupport) }
+                provide<CityQuery> { CityQuery(cityRepository) }
+                provide<AddressQuery> { AddressQuery(addressRepository) }
+                provide<PersonMutation> { PersonMutation(personRepository, personSchemaSupport) }
+                provide<CityMutation> { CityMutation(cityRepository) }
+                provide<AddressMutation> { AddressMutation(addressRepository) }
+            }
+
+            configureGraphQl()
+            configureRooting()
+        }
+
+        val response = client.post("/graphql") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"query":"query { listPersons { id firstName addresses { street } } }"}""")
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val payload = objectMapper.readTree(response.bodyAsText())
+        assertEquals("Ada", payload.at("/data/listPersons/0/firstName").asText())
+        assertEquals("Analytical Engine Street 1", payload.at("/data/listPersons/0/addresses/0/street").asText())
     }
 
     @Test
