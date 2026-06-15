@@ -81,6 +81,7 @@ class GraphQLRoutingTest {
             provide<PersonSchemaSupport> { personSchemaSupport }
         }
 
+        configureGraphQlControllers()
         configureCors()
         configureGraphQl()
         configureRooting()
